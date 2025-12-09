@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import {
@@ -59,11 +59,7 @@ export default function AdminLayananPage() {
     const [filterKategori, setFilterKategori] = useState('');
     const [filterStatus, setFilterStatus] = useState('');
 
-    useEffect(() => {
-        fetchLayanan();
-    }, [filterKategori, filterStatus]);
-
-    const fetchLayanan = async () => {
+    const fetchLayanan = useCallback(async () => {
         try {
             setLoading(true);
             const params = new URLSearchParams();
@@ -83,7 +79,12 @@ export default function AdminLayananPage() {
         } finally {
             setLoading(false);
         }
-    };
+    }, [filterKategori, filterStatus, searchTerm]);
+
+    useEffect(() => {
+        fetchLayanan();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [fetchLayanan]);
 
     const handleSearch = (e: React.FormEvent) => {
         e.preventDefault();

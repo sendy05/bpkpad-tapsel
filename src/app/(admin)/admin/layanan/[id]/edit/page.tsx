@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import {
@@ -48,7 +48,7 @@ export default function EditLayananPage({ params }: Props) {
         initParams();
     }, [params]);
 
-    const fetchLayanan = async (id: string) => {
+    const fetchLayanan = useCallback(async (id: string) => {
         try {
             const response = await fetch(`/api/admin/layanan/${id}`);
             if (response.ok) {
@@ -75,7 +75,7 @@ export default function EditLayananPage({ params }: Props) {
         } finally {
             setFetching(false);
         }
-    };
+    }, [router]);
 
     const handleChange = (
         e: React.ChangeEvent<
@@ -315,7 +315,7 @@ export default function EditLayananPage({ params }: Props) {
                             {/* Icon */}
                             <div>
                                 <label className="block text-sm font-medium text-slate-700 mb-2">
-                                    <Image className="w-4 h-4 inline mr-1" />
+                                    <span className="inline-block w-4 h-4 mr-1 align-middle">📦</span>
                                     Icon Name (Opsional)
                                 </label>
                                 <input

@@ -26,9 +26,10 @@ export function NewsCard({ title, excerpt, date, category, imageUrl, href }: New
                 {imageUrl && (
                     <div className="relative h-48 bg-gradient-to-br from-emerald-100 to-teal-100 overflow-hidden">
                         <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent z-10" />
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
                         <img
                             src={imageUrl}
-                            alt={title}
+                            alt={`${title} thumbnail`}
                             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                         />
                         <div className="absolute top-3 left-3 z-20">
