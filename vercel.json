@@ -1,3 +1,5 @@
 {
-  "buildCommand": "pnpm install && pnpm run build"
+  "installCommand": "npm install --legacy-peer-deps",
+  "buildCommand": "npm run build",
+  "nodeVersion": "20.x"
 }
