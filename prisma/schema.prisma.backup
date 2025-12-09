@@ -1,0 +1,519 @@
+generator client {
+    provider = "prisma-client-js"
+}
+
+datasource db {
+    provider = "mysql" // Using MySQL per .env DATABASE_URL
+    url      = env("DATABASE_URL")
+}
+
+model User {
+    id            String         @id @default(cuid())
+    name          String
+    email         String         @unique
+    username      String         @unique
+    passwordHash  String
+    role          Role
+    status        Status         @default(Active)
+    avatarUrl     String?        @map("avatar_url")
+    lastLoginAt   DateTime?      @map("last_login_at")
+    createdAt     DateTime       @default(now()) @map("created_at")
+    updatedAt     DateTime       @updatedAt @map("updated_at")
+    RefreshTokens RefreshToken[]
+    news          News[]
+    auditLogs     AuditLog[]
+}
+
+model RefreshToken {
+    id        String    @id @default(cuid())
+    user      User      @relation(fields: [userId], references: [id])
+    userId    String    @map("user_id")
+    tokenHash String    @map("token_hash")
+    expiresAt DateTime  @map("expires_at")
+    revokedAt DateTime? @map("revoked_at")
+    createdAt DateTime  @default(now()) @map("created_at")
+    userAgent String?   @map("user_agent")
+    ip        String?
+
+    @@index([userId])
+}
+
+enum Role {
+    SuperAdmin
+    Editor
+    Author
+}
+
+enum Status {
+    Active
+    Inactive
+}
+
+// Content models
+
+model News {
+    id            String     @id @default(cuid())
+    title         String
+    slug          String     @unique
+    content       String
+    excerpt       String?    @db.VarChar(300)
+    featuredImage String?
+    categoryId    String
+    category      Category   @relation(fields: [categoryId], references: [id])
+    status        NewsStatus @default(DRAFT)
+    publishedAt   DateTime?
+    views         Int        @default(0)
+    metaDesc      String?    @db.VarChar(160)
+    authorId      String
+    author        User       @relation(fields: [authorId], references: [id])
+    tags          Tag[]      @relation("NewsToTag")
+    createdAt     DateTime   @default(now())
+    updatedAt     DateTime   @updatedAt
+
+    @@index([categoryId])
+    @@index([authorId])
+}
+
+enum NewsStatus {
+    DRAFT
+    PUBLISHED
+}
+
+model Category {
+    id        String   @id @default(cuid())
+    name      String   @unique
+    slug      String   @unique
+    news      News[]
+    createdAt DateTime @default(now())
+}
+
+model Tag {
+    id   String @id @default(cuid())
+    name String @unique
+    slug String @unique
+    news News[] @relation("NewsToTag")
+}
+
+model Gallery {
+    id          String    @id @default(cuid())
+    title       String
+    description String?   @db.Text
+    imageUrl    String
+    event       String?
+    takenAt     DateTime?
+    createdAt   DateTime  @default(now())
+    updatedAt   DateTime  @updatedAt
+}
+
+model Page {
+    id        String   @id @default(cuid())
+    slug      String   @unique
+    title     String
+    content   String   @db.Text
+    updatedAt DateTime @updatedAt
+}
+
+model Slider {
+    id          String   @id @default(cuid())
+    title       String
+    description String?
+    imageUrl    String
+    linkUrl     String?
+    order       Int      @default(0)
+    isActive    Boolean  @default(true)
+    createdAt   DateTime @default(now())
+}
+
+model Download {
+    id            String   @id @default(cuid())
+    name          String
+    description   String?  @db.Text
+    fileUrl       String
+    category      String
+    fileSize      Int
+    downloadCount Int      @default(0)
+    createdAt     DateTime @default(now())
+}
+
+model Contact {
+    id        String   @id @default(cuid())
+    name      String
+    email     String
+    subject   String
+    message   String   @db.Text
+    status    String   @default("unread")
+    createdAt DateTime @default(now())
+}
+
+model Visitor {
+    id        String   @id @default(cuid())
+    page      String
+    userAgent String?
+    ipAddress String?
+    visitedAt DateTime @default(now())
+}
+
+model AuditLog {
+    id        String   @id @default(cuid())
+    userId    String
+    user      User     @relation(fields: [userId], references: [id])
+    action    String
+    entity    String
+    entityId  String
+    details   String?  @db.Text
+    createdAt DateTime @default(now())
+
+    @@index([userId])
+}
+
+// New models for complete menu structure
+
+model QuickMenu {
+    id          String   @id @default(cuid())
+    icon        String
+    title       String
+    description String?  @db.Text
+    link        String
+    color       String?  @default("blue")
+    order       Int      @default(0)
+    isActive    Boolean  @default(true)
+    createdAt   DateTime @default(now())
+    updatedAt   DateTime @updatedAt
+}
+
+model StatistikPAD {
+    id          String   @id @default(cuid())
+    tahun       Int
+    bulan       Int
+    target      Decimal  @db.Decimal(20, 2)
+    realisasi   Decimal  @db.Decimal(20, 2)
+    persentase  Decimal  @db.Decimal(5, 2)
+    jenisSektor String?
+    createdAt   DateTime @default(now())
+    updatedAt   DateTime @updatedAt
+
+    @@index([tahun, bulan])
+}
+
+model SOP {
+    id            String      @id @default(cuid())
+    judul         String
+    kategori      SOPKategori
+    deskripsi     String?     @db.Text
+    fileUrl       String?
+    nomorDokumen  String?
+    tanggalTerbit DateTime?
+    status        SOPStatus   @default(Active)
+    createdAt     DateTime    @default(now())
+    updatedAt     DateTime    @updatedAt
+
+    @@index([kategori, status])
+}
+
+enum SOPKategori {
+    SOP
+    MAKLUMAT
+    PETUNJUK_TEKNIS
+}
+
+enum SOPStatus {
+    Draft
+    Active
+    Archived
+}
+
+model Prestasi {
+    id        String   @id @default(cuid())
+    judul     String
+    deskripsi String   @db.Text
+    pemberi   String?
+    tanggal   DateTime
+    kategori  String?
+    fotoUrl   String?
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    @@index([tanggal(sort: Desc)])
+}
+
+model InformasiPublik {
+    id               String                  @id @default(cuid())
+    judul            String
+    kategori         InformasiPublikKategori
+    ringkasan        String?                 @db.Text
+    fileUrl          String?
+    tanggalPublikasi DateTime
+    pejabatPengelola String?
+    status           InfoPublikStatus        @default(Published)
+    jumlahUnduh      Int                     @default(0)
+    createdAt        DateTime                @default(now())
+    updatedAt        DateTime                @updatedAt
+
+    @@index([kategori, status])
+    @@index([tanggalPublikasi(sort: Desc)])
+}
+
+enum InformasiPublikKategori {
+    BERKALA
+    SERTA_MERTA
+    SETIAP_SAAT
+    DIKECUALIKAN
+}
+
+enum InfoPublikStatus {
+    Draft
+    Published
+    Archived
+}
+
+model JenisPajak {
+    id            String   @id @default(cuid())
+    nama          String
+    kode          String   @unique
+    deskripsi     String?  @db.Text
+    dasar_hukum   String?  @db.Text
+    tarif         String?
+    caraBayar     String?  @db.Text
+    kontakPetugas String?
+    formulirUrl   String?
+    isActive      Boolean  @default(true)
+    createdAt     DateTime @default(now())
+    updatedAt     DateTime @updatedAt
+
+    @@index([isActive])
+}
+
+model Retribusi {
+    id         String         @id @default(cuid())
+    nama       String
+    jenis      JenisRetribusi
+    deskripsi  String?        @db.Text
+    tarif      String?        @db.Text
+    prosedur   String?        @db.Text
+    dasarHukum String?        @db.Text
+    isActive   Boolean        @default(true)
+    createdAt  DateTime       @default(now())
+    updatedAt  DateTime       @updatedAt
+
+    @@index([jenis, isActive])
+}
+
+enum JenisRetribusi {
+    JASA_UMUM
+    JASA_USAHA
+    PERIZINAN_TERTENTU
+}
+
+model AsetDaerah {
+    id             String       @id @default(cuid())
+    kodeAset       String       @unique
+    namaAset       String
+    kategori       KategoriAset
+    lokasi         String?
+    kondisi        KondisiAset
+    nilaiPerolehan Decimal?     @db.Decimal(20, 2)
+    tahunPerolehan Int?
+    keterangan     String?      @db.Text
+    status         StatusAset   @default(AKTIF)
+    fotoUrl        String?
+    createdAt      DateTime     @default(now())
+    updatedAt      DateTime     @updatedAt
+
+    @@index([kategori, status])
+}
+
+enum KategoriAset {
+    TANAH
+    BANGUNAN
+    KENDARAAN
+    PERALATAN
+    LAINNYA
+}
+
+enum KondisiAset {
+    BAIK
+    RUSAK_RINGAN
+    RUSAK_BERAT
+}
+
+enum StatusAset {
+    AKTIF
+    DALAM_PERBAIKAN
+    TIDAK_DIGUNAKAN
+    DIHAPUS
+}
+
+model Pengaduan {
+    id               String            @id @default(cuid())
+    nomorTicket      String            @unique
+    nama             String
+    email            String?
+    telepon          String?
+    kategori         KategoriPengaduan
+    subjek           String
+    isiPengaduan     String            @db.Text
+    lampiran         String?
+    status           StatusPengaduan   @default(BARU)
+    tanggapan        String?           @db.Text
+    petugas          String?
+    isWhistleblowing Boolean           @default(false)
+    createdAt        DateTime          @default(now())
+    updatedAt        DateTime          @updatedAt
+
+    @@index([status, createdAt(sort: Desc)])
+}
+
+enum KategoriPengaduan {
+    PAJAK
+    RETRIBUSI
+    ASET
+    PELAYANAN
+    LAINNYA
+}
+
+enum StatusPengaduan {
+    BARU
+    DIPROSES
+    SELESAI
+    DITOLAK
+}
+
+model Regulasi {
+    id            String         @id @default(cuid())
+    judul         String
+    jenis         JenisRegulasi
+    nomor         String
+    tahun         Int
+    tentang       String         @db.Text
+    tanggalTerbit DateTime
+    fileUrl       String?
+    status        StatusRegulasi @default(Active)
+    jumlahUnduh   Int            @default(0)
+    createdAt     DateTime       @default(now())
+    updatedAt     DateTime       @updatedAt
+
+    @@index([jenis, status])
+    @@index([tahun(sort: Desc)])
+}
+
+enum JenisRegulasi {
+    PERDA
+    PERBUP
+    SK_KEPALA
+    JUKNIS
+    RENSTRA
+    RKPD
+    DOKUMEN_STRATEGIS
+}
+
+enum StatusRegulasi {
+    Draft
+    Active
+    Dicabut
+}
+
+model Agenda {
+    id             String       @id @default(cuid())
+    judul          String
+    deskripsi      String?      @db.Text
+    lokasi         String?
+    tanggalMulai   DateTime
+    tanggalSelesai DateTime?
+    jamMulai       String?
+    jamSelesai     String?
+    penyelenggara  String?
+    status         StatusAgenda @default(TERJADWAL)
+    fotoUrl        String?
+    createdAt      DateTime     @default(now())
+    updatedAt      DateTime     @updatedAt
+
+    @@index([tanggalMulai(sort: Desc), status])
+}
+
+enum StatusAgenda {
+    TERJADWAL
+    BERLANGSUNG
+    SELESAI
+    DIBATALKAN
+}
+
+model Video {
+    id               String      @id @default(cuid())
+    judul            String
+    deskripsi        String?     @db.Text
+    videoUrl         String
+    thumbnailUrl     String?
+    durasi           String?
+    kategori         String?
+    jumlahView       Int         @default(0)
+    tanggalPublikasi DateTime
+    status           StatusVideo @default(Published)
+    createdAt        DateTime    @default(now())
+    updatedAt        DateTime    @updatedAt
+
+    @@index([tanggalPublikasi(sort: Desc), status])
+}
+
+enum StatusVideo {
+    Draft
+    Published
+    Archived
+}
+
+model AplikasiLink {
+    id        String           @id @default(cuid())
+    nama      String
+    deskripsi String?          @db.Text
+    url       String
+    icon      String?
+    kategori  KategoriAplikasi
+    isActive  Boolean          @default(true)
+    order     Int              @default(0)
+    createdAt DateTime         @default(now())
+    updatedAt DateTime         @updatedAt
+
+    @@index([kategori, isActive])
+}
+
+enum KategoriAplikasi {
+    INTERNAL
+    EXTERNAL
+    PEMERINTAH
+}
+
+model KontakInfo {
+    id        String      @id @default(cuid())
+    jenis     JenisKontak
+    label     String
+    value     String      @db.Text
+    icon      String?
+    isPrimary Boolean     @default(false)
+    order     Int         @default(0)
+    createdAt DateTime    @default(now())
+    updatedAt DateTime    @updatedAt
+
+    @@index([jenis])
+}
+
+enum JenisKontak {
+    ALAMAT
+    TELEPON
+    FAX
+    EMAIL
+    WHATSAPP
+    JAM_LAYANAN
+}
+
+model Banner {
+    id        String   @id @default(cuid())
+    judul     String
+    subjudul  String?  @db.Text
+    imageUrl  String
+    link      String?
+    order     Int      @default(0)
+    isActive  Boolean  @default(true)
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    @@index([isActive, order])
+}

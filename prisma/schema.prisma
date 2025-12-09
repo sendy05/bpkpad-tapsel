@@ -1,0 +1,368 @@
+generator client {
+    provider = "prisma-client-js"
+}
+
+datasource db {
+    provider = "mysql"
+    url      = env("DATABASE_URL")
+}
+
+// Tabel Admin - User Management
+model admin {
+    id           Int       @id @default(autoincrement())
+    nm_pengguna  String?   @db.VarChar(100)
+    username     String?   @db.VarChar(100)
+    password     String?   @db.VarChar(100)
+    kd_skpd      String?   @db.VarChar(50)
+    nm_skpd      String?   @db.VarChar(225)
+    kd_unit      String?   @db.VarChar(50)
+    nm_unit      String?   @db.VarChar(225)
+    level        Int?
+    id_grup      String?   @db.Char(30)
+    status       Int
+    date_create  DateTime? @db.DateTime(0)
+    lock_user    Int
+    foto         String?   @db.VarChar(100)
+    tgl_lahir    DateTime? @db.Date
+    tempat_lahir String?   @db.VarChar(100)
+    no_tlp       String?   @db.VarChar(100)
+    email        String?   @db.VarChar(100)
+    tentang      String?   @db.Text
+    jns          String?   @db.VarChar(100)
+}
+
+// Tabel Admin Grup
+model admin_grup {
+    id_grup String  @id @db.Char(30)
+    nm_grup String? @db.VarChar(100)
+}
+
+// Tabel Dokumen (Regulasi/Peraturan)
+model dokumen {
+    no_dokumen  String    @id @db.VarChar(100)
+    jns_dokumen String    @db.Char(10)
+    judul       String?   @db.VarChar(225)
+    nomor       String?   @db.VarChar(50)
+    tahun       String?   @db.Char(10)
+    pramakarsa  String?   @db.VarChar(225)
+    mengubah    String?   @db.VarChar(225)
+    diubah      String?   @db.VarChar(225)
+    mencabut    String?   @db.VarChar(225)
+    dicabut     String?   @db.VarChar(225)
+    status      String?   @db.Char(20)
+    deskripsi   String?   @db.Text
+    tgl_upload  DateTime? @db.Date
+    file        String?   @db.VarChar(100)
+    size        Int?
+    type        String?   @db.VarChar(50)
+    user        String?   @db.VarChar(100)
+    aksi        String?   @db.VarChar(100)
+}
+
+// Tabel Modul
+model modul {
+    id      Int     @id @default(autoincrement())
+    kode    String? @db.Char(50)
+    modul   String? @db.VarChar(100)
+    page_id String? @db.Char(50)
+    url     String? @db.VarChar(225)
+}
+
+// Tabel Master Bulan
+model ms_bulan {
+    kode Int     @id
+    nama String? @db.VarChar(100)
+}
+
+// Tabel Master Client (Info Website)
+model msclient {
+    id            Int       @id @default(autoincrement())
+    nm_client     String?   @db.VarChar(225)
+    no_tlp        String?   @db.VarChar(100)
+    kd_pos        String?   @db.VarChar(100)
+    no_fax        String?   @db.VarChar(100)
+    whatshapp     String    @db.VarChar(100)
+    email         String?   @db.VarChar(100)
+    web           String?   @db.VarChar(100)
+    map           String?   @db.VarChar(100)
+    alamat        String?   @db.VarChar(225)
+    keterangan    String?   @db.Text
+    visi_misi     String?   @db.Text
+    fasilitas     String?   @db.Text
+    akreditasi    String?   @db.Text
+    logo          String?   @db.VarChar(100)
+    icon          String?   @db.VarChar(100)
+    banner        String?   @db.VarChar(100)
+    tgl_update    DateTime? @db.DateTime(0)
+    user          String?   @db.VarChar(100)
+    kepala_daerah String?   @db.VarChar(100)
+}
+
+// Tabel Otorisasi Menu
+model otori_menu {
+    id      Int     @id @default(autoincrement())
+    kode    String? @db.Char(50)
+    modul   String? @db.VarChar(100)
+    page_id String? @db.Char(50)
+    url     String? @db.VarChar(225)
+    id_grup String? @db.Char(30)
+}
+
+// Tabel Poll
+model poll {
+    sangatBaik Int @id
+    baik       Int
+    kurangBaik Int
+    tidakBaik  Int
+}
+
+// Tabel Statistik Pengunjung
+model statistik {
+    id_statistik Int       @id @default(autoincrement())
+    ip           String?   @db.VarChar(20)
+    os           String?   @db.VarChar(30)
+    browser      String?   @db.VarChar(120)
+    date_create  DateTime? @db.Date
+}
+
+// Tabel Aplikasi/Link
+model tbl_aplikasi {
+    id_aplikasi Int       @id @default(autoincrement())
+    nm_aplikasi String?   @db.VarChar(100)
+    icon        String?   @db.VarChar(100)
+    link        String?   @db.VarChar(100)
+    tgl_update  DateTime? @db.DateTime(0)
+    user        String?   @db.VarChar(100)
+}
+
+// Tabel Berita
+model tbl_berita {
+    id_berita  String    @id @db.VarChar(100)
+    tgl_update DateTime? @db.DateTime(0)
+    user       String?   @db.VarChar(100)
+    judul      String?   @db.VarChar(225)
+    isi        String?   @db.Text
+    foto       String?   @db.VarChar(100)
+    ukuran     String    @db.VarChar(100)
+    type       String    @db.VarChar(100)
+    baca       Int
+    suka       Int
+    kategori   String?   @db.VarChar(100)
+}
+
+// Tabel Pendaftaran
+model tbl_daftar {
+    username String @id @db.VarChar(100)
+    nama     String @db.VarChar(100)
+    telp     String @db.VarChar(20)
+    password String @db.VarChar(100)
+}
+
+// Tabel Fakultas/Unit Kerja
+model tbl_fakultas {
+    id_fakultas String    @id @db.VarChar(100)
+    nm_fakultas String?   @db.VarChar(225)
+    keterangan  String?   @db.Text
+    foto        String?   @db.VarChar(100)
+    tgl_update  DateTime? @db.DateTime(0)
+    user        String?   @db.VarChar(100)
+}
+
+// Tabel Galeri
+model tbl_galery {
+    id         Int       @id @default(autoincrement())
+    foto       String?   @db.VarChar(100)
+    keterangan String?   @db.Text
+    tgl_update DateTime? @db.DateTime(0)
+    user       String?   @db.VarChar(100)
+}
+
+// Tabel Pengumuman
+model tbl_pengumuman {
+    id         String    @id @db.VarChar(100)
+    judul      String?   @db.VarChar(225)
+    isi        String?   @db.Text
+    file       String?   @db.VarChar(100)
+    download   Int
+    tgl_update DateTime? @db.DateTime(0)
+    user       String?   @db.VarChar(100)
+}
+
+// Tabel Sarana
+model tbl_sarana {
+    id_sarana  String    @id @db.VarChar(100)
+    nm_sarana  String?   @db.VarChar(225)
+    keterangan String?   @db.Text
+    foto       String?   @db.VarChar(100)
+    tgl_update DateTime? @db.DateTime(0)
+    user       String?   @db.VarChar(100)
+}
+
+// Tabel Slider
+model tbl_slider {
+    id         Int       @id @default(autoincrement())
+    foto       String?   @db.VarChar(100)
+    keterangan String?   @db.Text
+    tgl_update DateTime? @db.DateTime(0)
+    user       String?   @db.VarChar(100)
+}
+
+// Tabel Tautan/Link
+model tbl_tautan {
+    id        Int     @id @default(autoincrement())
+    nm_tautan String? @db.VarChar(225)
+    url       String? @db.VarChar(100)
+}
+
+// Tabel Video
+model tbl_video {
+    id         String   @id @db.Char(100)
+    video      String   @db.VarChar(200)
+    keterangan String   @db.VarChar(300)
+    tgl_update DateTime @db.Date
+    user       String   @db.Char(50)
+}
+
+// Tabel Profil Organisasi
+model profil_organisasi {
+    id          Int       @id @default(autoincrement())
+    visi        String?   @db.Text
+    misi        String?   @db.Text
+    sejarah     String?   @db.Text
+    tugas_pokok String?   @db.Text
+    tgl_update  DateTime? @db.DateTime(0)
+    user        String?   @db.VarChar(100)
+}
+
+// Tabel Struktur Organisasi
+model struktur_organisasi {
+    id         Int       @id @default(autoincrement())
+    gambar     String?   @db.VarChar(200)
+    keterangan String?   @db.Text
+    tgl_update DateTime? @db.DateTime(0)
+    user       String?   @db.VarChar(100)
+}
+
+// Tabel Pejabat
+model pejabat {
+    id         Int       @id @default(autoincrement())
+    nama       String    @db.VarChar(200)
+    jabatan    String    @db.VarChar(200)
+    foto       String?   @db.VarChar(200)
+    nip        String?   @db.VarChar(50)
+    email      String?   @db.VarChar(100)
+    telepon    String?   @db.VarChar(50)
+    urutan     Int       @default(0)
+    status     Int       @default(1)
+    tgl_update DateTime? @db.DateTime(0)
+    user       String?   @db.VarChar(100)
+}
+
+// Tabel SOP
+model sop_dokumen {
+    id         Int       @id @default(autoincrement())
+    judul      String    @db.VarChar(225)
+    kategori   String    @db.VarChar(100)
+    file       String?   @db.VarChar(200)
+    deskripsi  String?   @db.Text
+    nomor      String?   @db.VarChar(50)
+    tgl_terbit DateTime? @db.Date
+    status     Int       @default(1)
+    tgl_update DateTime? @db.DateTime(0)
+    user       String?   @db.VarChar(100)
+}
+
+// Tabel Prestasi
+model prestasi_organisasi {
+    id         Int       @id @default(autoincrement())
+    judul      String    @db.VarChar(225)
+    deskripsi  String?   @db.Text
+    pemberi    String?   @db.VarChar(200)
+    tanggal    DateTime  @db.Date
+    kategori   String?   @db.VarChar(100)
+    foto       String?   @db.VarChar(200)
+    tgl_update DateTime? @db.DateTime(0)
+    user       String?   @db.VarChar(100)
+}
+
+// Tabel PPID - Informasi Publik
+model informasiPublik {
+    id               Int       @id @default(autoincrement())
+    kategori         String    @db.VarChar(50) // BERKALA, SERTA_MERTA, SETIAP_SAAT
+    judul            String    @db.VarChar(225)
+    ringkasan        String?   @db.Text
+    pejabatPengelola String    @db.VarChar(200)
+    tanggalPublikasi DateTime  @db.Date
+    fileUrl          String?   @db.VarChar(255)
+    status           String    @default("Draft") @db.VarChar(50) // Draft, Published, Archived
+    tgl_update       DateTime? @db.DateTime(0)
+    user             String?   @db.VarChar(100)
+
+    @@map("informasi_publik")
+}
+
+// Tabel Layanan
+model layanan {
+    id                 Int       @id @default(autoincrement())
+    kategori           String    @db.VarChar(100) // retribusi, aset, pengaduan
+    judul              String    @db.VarChar(225)
+    deskripsi          String?   @db.Text
+    prosedur           String?   @db.Text
+    persyaratan        String?   @db.Text
+    biaya              String?   @db.VarChar(200)
+    waktu_penyelesaian String?   @db.VarChar(100)
+    link_url           String?   @db.VarChar(255)
+    icon               String?   @db.VarChar(100)
+    status             Int       @default(1) // 1=Active, 0=Inactive
+    tgl_update         DateTime? @db.DateTime(0)
+    user               String?   @db.VarChar(100)
+}
+
+// Tabel Agenda
+model agenda {
+    id              Int       @id @default(autoincrement())
+    judul           String    @db.VarChar(225)
+    deskripsi       String?   @db.Text
+    tanggal_mulai   DateTime  @db.DateTime(0)
+    tanggal_selesai DateTime? @db.DateTime(0)
+    lokasi          String?   @db.VarChar(255)
+    penyelenggara   String?   @db.VarChar(200)
+    kategori        String?   @db.VarChar(100) // rapat, sosialisasi, pelatihan
+    foto            String?   @db.VarChar(255)
+    status          String    @default("upcoming") @db.VarChar(50) // upcoming, ongoing, completed
+    tgl_update      DateTime? @db.DateTime(0)
+    user            String?   @db.VarChar(100)
+}
+
+// Tabel Kontak
+model kontak {
+    id              Int       @id @default(autoincrement())
+    kategori        String    @db.VarChar(100) // kantor, bidang, layanan
+    nama            String    @db.VarChar(200)
+    jabatan         String?   @db.VarChar(200)
+    telepon         String?   @db.VarChar(50)
+    email           String?   @db.VarChar(100)
+    alamat          String?   @db.Text
+    jam_operasional String?   @db.VarChar(200)
+    map_url         String?   @db.Text
+    urutan          Int       @default(0)
+    status          Int       @default(1)
+    tgl_update      DateTime? @db.DateTime(0)
+    user            String?   @db.VarChar(100)
+}
+
+// Tabel Data Statistik
+model data_statistik {
+    id         Int       @id @default(autoincrement())
+    kategori   String    @db.VarChar(100) // pajak, retribusi, aset, pendapatan
+    judul      String    @db.VarChar(225)
+    deskripsi  String?   @db.Text
+    periode    String?   @db.VarChar(100)
+    nilai      Decimal?  @db.Decimal(20, 2)
+    satuan     String?   @db.VarChar(50) // Rupiah, Unit, Persentase
+    file_data  String?   @db.VarChar(255)
+    tahun      Int?
+    bulan      Int?
+    tgl_update DateTime? @db.DateTime(0)
+    user       String?   @db.VarChar(100)
+}

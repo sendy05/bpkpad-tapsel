@@ -1,0 +1,530 @@
+meta:
+  project: "Admin Backoffice Website BPKPAD Kab. Tapanuli Selatan"
+  audience: "Administrator (Super Admin, Editor, Author)"
+  language: "id-ID"
+  last_updated: "2025-10-25"
+  version: "1.0"
+
+ tujuan:
+  - Memfasilitasi pengelolaan konten situs (berita, galeri, halaman statis, slider, download center) secara aman dan efisien.
+  - Menyediakan manajemen pengguna admin dengan kontrol role & permission yang jelas.
+  - Menyediakan insight statistik kunjungan untuk pengambilan keputusan.
+
+ tech_rekomendasi:
+  frontend: "Next.js App Router (admin namespace /admin), Tailwind CSS"
+  backend: "Next.js Route Handlers /api/admin atau service terpisah (Express/NestJS)"
+  auth: "JWT (access+refresh) via httpOnly cookies, CSRF double-submit token"
+  db: "PostgreSQL + Prisma (opsi: MySQL)"
+  cache_queue: "Redis untuk rate limiting, session idle tracking, dan queue image processing"
+  storage: "Local/public atau S3-compatible untuk media"
+  image_processing: "sharp untuk resize/optimasi/cropping"
+  rte: "TipTap/Editor.js/TinyMCE dengan plugin clean-paste"
+
+ roles_permissions:
+  roles:
+    - name: "Super Admin"
+      description: "Akses penuh semua fitur termasuk manajemen user dan pengaturan."
+    - name: "Editor"
+      description: "Kelola konten penuh (buat, edit, publish, hapus) kecuali manajemen user."
+    - name: "Author"
+      description: "Buat dan edit draft berita. Tidak dapat publish atau delete."
+  matrix:
+    users:
+      create: ["Super Admin"]
+      read: ["Super Admin"]
+      update: ["Super Admin"]
+      delete: ["Super Admin"]
+    news:
+      create: ["Super Admin", "Editor", "Author"]
+      read: ["Super Admin", "Editor", "Author"]
+      update: ["Super Admin", "Editor", "Author"]
+      publish: ["Super Admin", "Editor"]
+      delete: ["Super Admin", "Editor"]
+    categories:
+      create: ["Super Admin", "Editor"]
+      read: ["Super Admin", "Editor", "Author"]
+      update: ["Super Admin", "Editor"]
+      delete: ["Super Admin", "Editor"]
+    gallery:
+      create: ["Super Admin", "Editor"]
+      read: ["Super Admin", "Editor", "Author"]
+      update: ["Super Admin", "Editor"]
+      delete: ["Super Admin", "Editor"]
+    pages:
+      update: ["Super Admin", "Editor"]
+    slider:
+      create: ["Super Admin", "Editor"]
+      read: ["Super Admin", "Editor", "Author"]
+      update: ["Super Admin", "Editor"]
+      delete: ["Super Admin", "Editor"]
+    downloads:
+      create: ["Super Admin", "Editor"]
+      read: ["Super Admin", "Editor", "Author"]
+      update: ["Super Admin", "Editor"]
+      delete: ["Super Admin", "Editor"]
+    stats:
+      read: ["Super Admin", "Editor"]
+    audit_logs:
+      read: ["Super Admin"]
+
+ autentikasi:
+  login:
+    fields: ["username_or_email", "password", "remember_me"]
+    validation:
+      username_or_email: { required: true }
+      password: { required: true, min: 8 }
+    rate_limit: { key: "ip+username", window: "15m", max: 5 }
+    hashing: { algorithm: "bcrypt", cost: 12 }
+    session:
+      access_token: { ttl: "15m" }
+      refresh_token: { ttl: "7d" }
+      remember_me_extends_refresh: true # contoh: 30d jika remember_me
+      idle_timeout: "30m" # auto-logout setelah idle
+      rotation: "refresh token rotation + revoke on reuse"
+    transport:
+      cookies:
+        httpOnly: true
+        sameSite: "lax"
+        secure: true
+        path: "/"
+      csrf: { strategy: "double-submit", header: "x-csrf-token", cookie: "csrf" }
+  logout:
+    revoke_tokens: true
+    clear_cookies: true
+  authorization:
+    strategy: "role-based"
+    claim_mapping: { sub: "userId", role: "role", perms: "custom_permissions" }
+
+ admin_sitemap:
+  - path: "/admin/login"
+    title: "Login Admin"
+  - path: "/admin"
+    title: "Dashboard"
+  - path: "/admin/berita"
+    title: "Daftar Berita"
+  - path: "/admin/berita/new"
+    title: "Tambah Berita"
+  - path: "/admin/berita/[id]"
+    title: "Edit Berita"
+  - path: "/admin/kategori"
+    title: "Kategori Berita"
+  - path: "/admin/galeri"
+    title: "Galeri"
+  - path: "/admin/galeri/new"
+    title: "Tambah Foto"
+  - path: "/admin/galeri/bulk-upload"
+    title: "Upload Banyak Foto"
+  - path: "/admin/halaman/profil"
+    title: "Halaman Profil"
+  - path: "/admin/halaman/kontak"
+    title: "Informasi Kontak"
+  - path: "/admin/slider"
+    title: "Slider Homepage"
+  - path: "/admin/downloads"
+    title: "Download Center"
+  - path: "/admin/users"
+    title: "Manajemen User"
+  - path: "/admin/profile"
+    title: "Profile Setting"
+  - path: "/admin/stats"
+    title: "Statistik Website"
+  - path: "/admin/audit-logs"
+    title: "Audit Log"
+
+ ui_ux:
+  layout:
+    - Sidebar navigasi (ikon + label)
+    - Topbar (user menu, notifikasi, quick actions)
+    - Konten utama responsive untuk tablet & desktop
+  dashboard:
+    widgets:
+      - cards: ["total_berita_published", "total_berita_draft", "pengunjung_bulan_ini"]
+      - chart_line_pengunjung_7_hari
+      - last_edited_news: 5
+      - quick_actions: ["Tambah Berita", "Lihat Komentar", "Manajemen User"]
+  tables:
+    features: ["filter", "search", "pagination", "sorting", "bulk_actions", "column_visibility"]
+    pagination: { page_size: 25 }
+  forms:
+    validation: "client + server"
+    feedback: ["inline error", "toast success"]
+  uploader:
+    constraints: { max_files: 10, max_size_mb: 5, types: ["image/jpeg", "image/png"] }
+    image_tools: ["preview", "crop", "resize", "optimize"]
+  rte:
+    features: ["bold", "italic", "heading", "list", "link", "insert_image"]
+    paste_from_word: { clean_styles: true, remove_mso: true }
+  drag_drop:
+    slider_reorder: true
+
+ data_model:
+  User:
+    fields:
+      - { name: id, type: uuid, pk: true }
+      - { name: name, type: string }
+      - { name: email, type: string, unique: true }
+      - { name: username, type: string, unique: true }
+      - { name: password_hash, type: string }
+      - { name: role, type: enum, values: [SuperAdmin, Editor, Author] }
+      - { name: status, type: enum, values: [Active, Inactive], default: Active }
+      - { name: avatar_url, type: url, optional: true }
+      - { name: last_login_at, type: datetime, optional: true }
+      - { name: created_at, type: datetime }
+      - { name: updated_at, type: datetime }
+  RefreshToken:
+    fields:
+      - { name: id, type: uuid, pk: true }
+      - { name: user_id, type: uuid, fk: User.id }
+      - { name: token_hash, type: string }
+      - { name: expires_at, type: datetime }
+      - { name: revoked_at, type: datetime, optional: true }
+      - { name: created_at, type: datetime }
+      - { name: user_agent, type: string, optional: true }
+      - { name: ip, type: string, optional: true }
+  NewsCategory:
+    fields:
+      - { name: id, type: uuid, pk: true }
+      - { name: name, type: string, unique: true }
+      - { name: slug, type: string, unique: true }
+      - { name: created_at, type: datetime }
+      - { name: updated_at, type: datetime }
+  NewsArticle:
+    fields:
+      - { name: id, type: uuid, pk: true }
+      - { name: title, type: string, max: 200 }
+      - { name: slug, type: string, unique: true }
+      - { name: category_id, type: uuid, fk: NewsCategory.id }
+      - { name: featured_image_url, type: url, optional: true }
+      - { name: content_rich, type: richtext }
+      - { name: meta_description, type: string, max: 160, optional: true }
+      - { name: tags, type: string[], optional: true }
+      - { name: status, type: enum, values: [Draft, Published], default: Draft }
+      - { name: published_at, type: datetime, optional: true }
+      - { name: author_id, type: uuid, fk: User.id }
+      - { name: views, type: number, default: 0 }
+      - { name: created_at, type: datetime }
+      - { name: updated_at, type: datetime }
+  GalleryPhoto:
+    fields:
+      - { name: id, type: uuid, pk: true }
+      - { name: title, type: string }
+      - { name: description, type: text, optional: true }
+      - { name: image_url, type: url }
+      - { name: event, type: string, optional: true }
+      - { name: taken_at, type: date, optional: true }
+      - { name: year, type: number }
+      - { name: uploaded_by, type: uuid, fk: User.id }
+      - { name: created_at, type: datetime }
+      - { name: updated_at, type: datetime }
+  StaticPage:
+    fields:
+      - { name: id, type: uuid, pk: true }
+      - { name: key, type: enum, values: [profil_visi_misi, profil_sejarah, profil_tupoksi, profil_struktur, kontak_info] }
+      - { name: content_rich, type: richtext }
+      - { name: media_url, type: url, optional: true }
+      - { name: updated_by, type: uuid, fk: User.id }
+      - { name: updated_at, type: datetime }
+  SliderItem:
+    fields:
+      - { name: id, type: uuid, pk: true }
+      - { name: title, type: string }
+      - { name: description, type: string, optional: true }
+      - { name: image_url, type: url }
+      - { name: cta_label, type: string, optional: true }
+      - { name: cta_href, type: url, optional: true }
+      - { name: order, type: number }
+      - { name: is_active, type: boolean, default: true }
+      - { name: created_at, type: datetime }
+      - { name: updated_at, type: datetime }
+  DownloadFile:
+    fields:
+      - { name: id, type: uuid, pk: true }
+      - { name: name, type: string }
+      - { name: category, type: enum, values: [regulasi, formulir, laporan] }
+      - { name: description, type: text, optional: true }
+      - { name: file_url, type: url }
+      - { name: size, type: string }
+      - { name: uploaded_at, type: datetime }
+      - { name: download_count, type: number, default: 0 }
+      - { name: uploaded_by, type: uuid, fk: User.id }
+  AuditLog:
+    fields:
+      - { name: id, type: uuid, pk: true }
+      - { name: actor_id, type: uuid, fk: User.id }
+      - { name: action, type: string } # create/update/delete/publish/login/logout
+      - { name: resource, type: string } # e.g. NewsArticle:123
+      - { name: before, type: json, optional: true }
+      - { name: after, type: json, optional: true }
+      - { name: ip, type: string, optional: true }
+      - { name: user_agent, type: string, optional: true }
+      - { name: created_at, type: datetime }
+  VisitStat:
+    fields:
+      - { name: id, type: uuid, pk: true }
+      - { name: date, type: date }
+      - { name: visits, type: number }
+      - { name: page, type: string, optional: true }
+      - { name: browser, type: string, optional: true }
+      - { name: device, type: string, optional: true }
+
+ api_admin:
+  base: "/api/admin"
+  auth:
+    - method: POST
+      path: "/auth/login"
+      body: { username_or_email: string, password: string, remember_me?: boolean, csrf?: string }
+      responses:
+        200: { access: "jwt", refresh: "cookie", user: "User" }
+        400: { error: string }
+        401: { error: string }
+        429: { error: "Too many attempts" }
+    - method: POST
+      path: "/auth/refresh"
+      responses: { 200: { access: "jwt" }, 401: { error: string } }
+    - method: POST
+      path: "/auth/logout"
+      responses: { 200: { ok: true } }
+  news:
+    - method: GET
+      path: "/news"
+      query: { page: number, pageSize: number, status?: string, category?: string, author?: string, from?: date, to?: date, q?: string, sort?: string }
+      response: { items: NewsArticle[], total: number }
+    - method: POST
+      path: "/news"
+      body: NewsArticle
+      perms: ["create:news"]
+    - method: GET
+      path: "/news/{id}"
+      response: NewsArticle
+    - method: PATCH
+      path: "/news/{id}"
+      body: Partial<NewsArticle>
+      perms: ["update:news"]
+    - method: DELETE
+      path: "/news/{id}"
+      perms: ["delete:news"]
+    - method: POST
+      path: "/news/bulk"
+      body: { ids: uuid[], action: "delete" | "publish" | "draft" }
+      perms: ["update:news", "delete:news"]
+  categories:
+    - method: GET
+      path: "/categories"
+      response: NewsCategory[]
+    - method: POST
+      path: "/categories"
+      body: { name: string, slug?: string }
+    - method: PATCH
+      path: "/categories/{id}"
+    - method: DELETE
+      path: "/categories/{id}"
+      guards: ["deny if has related news"]
+  gallery:
+    - method: GET
+      path: "/gallery"
+      query: { page: number, pageSize: number, year?: number, event?: string, q?: string }
+      response: { items: GalleryPhoto[], total: number }
+    - method: POST
+      path: "/gallery"
+      body: multipart/form-data (image + metadata)
+    - method: POST
+      path: "/gallery/bulk"
+      body: multipart/form-data (max 10 images)
+    - method: PATCH
+      path: "/gallery/{id}"
+    - method: DELETE
+      path: "/gallery/{id}"
+      bulk_supported: true
+  pages:
+    - method: GET
+      path: "/pages/{key}"
+      response: StaticPage
+    - method: PUT
+      path: "/pages/{key}"
+      body: StaticPage
+  slider:
+    - method: GET
+      path: "/slider"
+      response: SliderItem[]
+    - method: POST
+      path: "/slider"
+      body: SliderItem
+    - method: PATCH
+      path: "/slider/{id}"
+    - method: DELETE
+      path: "/slider/{id}"
+    - method: POST
+      path: "/slider/reorder"
+      body: { ordered_ids: uuid[] }
+  downloads:
+    - method: GET
+      path: "/downloads"
+      query: { page: number, pageSize: number, category?: string, q?: string }
+      response: { items: DownloadFile[], total: number }
+    - method: POST
+      path: "/downloads"
+      body: multipart/form-data (pdf + metadata)
+    - method: PATCH
+      path: "/downloads/{id}"
+    - method: DELETE
+      path: "/downloads/{id}"
+  users:
+    - method: GET
+      path: "/users"
+      response: User[]
+      guards: ["SuperAdmin only"]
+    - method: POST
+      path: "/users"
+      body: { name: string, email: string, username: string, role: string, password: string }
+      guards: ["SuperAdmin only"]
+    - method: PATCH
+      path: "/users/{id}"
+      guards: ["SuperAdmin only"]
+    - method: DELETE
+      path: "/users/{id}"
+      guards: ["SuperAdmin only"]
+  profile:
+    - method: GET
+      path: "/profile/me"
+    - method: PATCH
+      path: "/profile/me"
+      body: { name?: string, email?: string, password?: string, avatar?: file }
+    - method: GET
+      path: "/profile/login-history"
+      response: { items: { ip: string, user_agent: string, at: datetime }[] }
+  stats:
+    - method: GET
+      path: "/stats/overview"
+      response: { total_published: number, total_draft: number, pengunjung_bulan_ini: number }
+    - method: GET
+      path: "/stats/visitors"
+      query: { range: "7d" | "30d" }
+      response: { series: { date: date, visits: number }[] }
+    - method: GET
+      path: "/stats/top-pages"
+      response: { items: { page: string, visits: number }[] }
+    - method: GET
+      path: "/stats/agents"
+      response: { browser: { name: string, count: number }[], device: { name: string, count: number }[] }
+  audit:
+    - method: GET
+      path: "/audit-logs"
+      query: { page: number, pageSize: number, user?: uuid, action?: string, resource?: string, from?: date, to?: date }
+      response: { items: AuditLog[], total: number }
+
+ keamanan:
+  password_policy: { min: 8, require_number: true, require_letter: true }
+  input_validation: "schema-based (zod/yup) di server + client"
+  csrf: "double submit token untuk semua POST/PUT/PATCH/DELETE di admin"
+  rate_limits:
+    login: { key: "ip+username", window: "15m", max: 5 }
+    write_ops: { key: "ip", window: "1m", max: 60 }
+  cookies: { httpOnly: true, secure: true, sameSite: "lax" }
+  headers: ["CSP", "HSTS", "X-Frame-Options", "X-Content-Type-Options", "Referrer-Policy", "Permissions-Policy"]
+  upload_security: { accept: ["image/jpeg", "image/png", "application/pdf"], size_mb_max: 10, virus_scan: false }
+  content_sanitization: { html: true, allowed_tags: "basic formatting + links", disallow_scripts: true }
+  audit_log: { enabled: true, events: ["login", "logout", "create", "update", "delete", "publish"], store_diff: true }
+
+ gambar_file:
+  image_optimization:
+    formats: ["webp", "jpeg"]
+    sizes:
+      - { width: 1920, fit: "cover" }
+      - { width: 1280, fit: "cover" }
+      - { width: 800, fit: "cover" }
+    quality: 75
+  cropping: { aspect_ratios: ["16:9", "4:3", "1:1"], freeform: true }
+  uploads:
+    gallery_max_files: 10
+    gallery_max_size_mb: 5
+    news_featured_max_size_mb: 2
+
+ flows:
+  login_flow:
+    steps:
+      - GET /admin/login -> tampilkan form + CSRF cookie
+      - POST /api/admin/auth/login -> validasi + set cookie (access httpOnly short-lived optional via header, refresh httpOnly) + redirect /admin
+      - Rate limit diterapkan; pada 401/429 tampilkan pesan error
+  session_idle:
+    mechanism: "update last_activity per request; auto logout jika >30m; token refresh hanya jika aktif"
+  news_editor:
+    autosave: { interval: "30s", endpoint: "/api/admin/news/{id}/autosave" }
+    slug: { generate_from_title: true, manual_edit_allowed: true, uniqueness_check: true }
+    preview: { url: "/preview/news/{id}", requires_token: true }
+  categories_guard:
+    delete_rule: "blok jika ada news terkait"
+  slider_reorder:
+    interaction: "drag-and-drop", persist: POST /api/admin/slider/reorder
+
+ acceptance_criteria:
+  auth_security:
+    - Password hashed dengan bcrypt cost >= 12.
+    - JWT access+refresh via httpOnly cookies, refresh rotation.
+    - Rate limit login: max 5/15m per ip+username.
+    - Auto-logout setelah 30 menit idle.
+    - CSRF aktif untuk semua write ops.
+  dashboard:
+    - Tampil 3 statistik utama.
+    - Grafik pengunjung 7 hari terakhir.
+    - Menampilkan 5 berita terakhir diedit.
+    - Quick actions berfungsi.
+  news_management:
+    - List memiliki filter, search, sort, pagination 25/page, bulk actions.
+    - Form validasi (judul max 200, meta desc max 160, kategori wajib, status).
+    - Featured image upload <= 2MB JPG/PNG + preview + optimasi.
+    - RTE mendukung paste dari Word dengan pembersihan styling.
+    - Auto-save tiap 30 detik; draft tersimpan.
+    - Preview dapat dibuka sebelum publish.
+  categories:
+    - CRUD; delete tertolak jika terkait berita.
+  gallery:
+    - Grid, filter tahun/event, search, bulk delete.
+    - Multiple upload max 10, tiap file <= 5MB; dukung cropping.
+  pages_static:
+    - Edit Visi/Misi, Sejarah, Tupoksi, Struktur (rich text) + upload struktur.
+    - Preview sebelum simpan.
+  contact_info:
+    - Edit alamat/telepon/email/koordinat/jam.
+  slider:
+    - Max 5 slides; CRUD + drag-and-drop reorder.
+  downloads:
+    - List, upload PDF hingga 10MB; edit metadata; delete.
+  users_admin:
+    - Hanya Super Admin; CRUD user, activate/deactivate, reset password.
+  profile_setting:
+    - Semua role: edit profile, ganti password, upload avatar, lihat riwayat login.
+  stats:
+    - Total kunjungan (hari, minggu, bulan, tahun), grafik 30 hari, top pages, browser/device breakdown.
+  non_functional:
+    - Admin responsive untuk tablet & desktop.
+    - Validasi client+server; error message jelas.
+    - Audit log tercatat pada setiap perubahan konten.
+    - Image optimization otomatis saat upload.
+
+ testing:
+  unit:
+    - Auth utils (hash/verify password, sign/verify JWT, CSRF generator/validator).
+    - Slug generator, autosave scheduler, validators.
+  integration:
+    - /auth/login rate limit & session cookies.
+    - /news CRUD + filter/sort/search/pagination + bulk.
+    - /categories delete guard.
+    - /gallery upload (multipart), cropping, optimasi output.
+    - /pages update & preview.
+    - /slider reorder persist.
+    - /downloads upload & metadata.
+    - /users CRUD role-guarded.
+    - /audit-logs listing with filters.
+  e2e:
+    - Login, dashboard load.
+    - Tambah berita draft, autosave, preview, publish (Editor).
+    - Author tidak bisa publish/delete.
+    - Upload gallery multiple + crop + delete bulk.
+    - Edit halaman profil dan preview.
+    - Reorder slider dan simpan.
+    - Upload file download dan tampil di list publik.
+
+ observability:
+  logs: ["auth", "errors", "audit"]
+  metrics: ["request_count", "latency", "upload_throughput"]
+  alerts: ["login_bruteforce", "error_rate_spike"]

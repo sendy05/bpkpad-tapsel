@@ -1,0 +1,406 @@
+meta:
+  project: "Website Profil BPKPAD Kab. Tapanuli Selatan"
+  owner: "BPKPAD Kab. Tapanuli Selatan"
+  audience: "Masyarakat umum, pelaku usaha, internal pemda"
+  language: "id-ID"
+  last_updated: "2025-10-24"
+  version: "1.0"
+
+ tujuan:
+  - Menyediakan informasi resmi BPKPAD secara transparan dan akuntabel.
+  - Memudahkan akses layanan (informasi pajak, retribusi, aset, unduhan dokumen).
+  - Meningkatkan keterjangkauan dan kualitas layanan publik berbasis web.
+  - Memenuhi standar website instansi pemerintah dan praktik terbaik modern.
+
+ scope:
+  public_pages:
+    - beranda
+    - profil
+    - berita_dan_artikel
+    - informasi_dan_layanan
+    - galeri
+    - kontak
+  out_of_scope:
+    - Portal login/admin (hanya disebutkan untuk integrasi di masa depan)
+    - Transaksi pajak online (hanya link informasi)
+
+ sitemap:
+  - path: "/"
+    title: "Beranda"
+  - path: "/profil"
+    title: "Profil BPKPAD"
+  - path: "/berita"
+    title: "Berita & Artikel"
+  - path: "/informasi-layanan"
+    title: "Informasi & Layanan"
+  - path: "/galeri"
+    title: "Galeri"
+  - path: "/kontak"
+    title: "Kontak"
+  - path: "/berita/[slug]"
+    title: "Detail Berita"
+
+ navigasi:
+  header:
+    items:
+      - label: "Beranda"
+        href: "/"
+      - label: "Profil"
+        href: "/profil"
+      - label: "Berita"
+        href: "/berita"
+      - label: "Informasi & Layanan"
+        href: "/informasi-layanan"
+      - label: "Galeri"
+        href: "/galeri"
+      - label: "Kontak"
+        href: "/kontak"
+  footer:
+    columns:
+      - title: "BPKPAD Tapanuli Selatan"
+        links:
+          - label: "Profil"
+            href: "/profil"
+          - label: "Struktur Organisasi"
+            href: "/profil#struktur-organisasi"
+      - title: "Informasi"
+        links:
+          - label: "Pajak Daerah"
+            href: "/informasi-layanan#pajak"
+          - label: "Retribusi Daerah"
+            href: "/informasi-layanan#retribusi"
+          - label: "Aset Daerah"
+            href: "/informasi-layanan#aset"
+          - label: "Download Center"
+            href: "/informasi-layanan#download"
+      - title: "Lainnya"
+        links:
+          - label: "Berita"
+            href: "/berita"
+          - label: "Galeri"
+            href: "/galeri"
+          - label: "Kontak"
+            href: "/kontak"
+    note: "© BPKPAD Kab. Tapanuli Selatan, {{year}}"
+
+ breadcrumbs:
+  - match: "/profil"
+    trail: ["Beranda", "Profil"]
+  - match: "/berita"
+    trail: ["Beranda", "Berita"]
+  - match: "/berita/*"
+    trail: ["Beranda", "Berita", "Detail"]
+  - match: "/informasi-layanan"
+    trail: ["Beranda", "Informasi & Layanan"]
+  - match: "/galeri"
+    trail: ["Beranda", "Galeri"]
+  - match: "/kontak"
+    trail: ["Beranda", "Kontak"]
+
+ halaman:
+  beranda:
+    sections:
+      - hero:
+          image: "images/hero-kantor-bpkpad.jpg" # optimasi WebP/AVIF saat implementasi
+          tagline: "Transparan, Akuntabel, dan Melayani"
+          cta_primary:
+            label: "Informasi Pajak Daerah"
+            href: "/informasi-layanan#pajak"
+          cta_secondary:
+            label: "Berita Terbaru"
+            href: "/berita"
+      - sambutan_kepala:
+          photo: "images/kepala-bpkpad.jpg"
+          name: "Nama Kepala BPKPAD"
+          title: "Kepala BPKPAD Kab. Tapanuli Selatan"
+          excerpt: "Selamat datang di Website Resmi BPKPAD Kab. Tapanuli Selatan. Kami berkomitmen pada tata kelola yang baik dan layanan publik yang prima."
+      - statistik_utama:
+          cards:
+            - label: "Total PAD"
+              key: "total_pad"
+              format: "currency"
+            - label: "Total Aset Daerah"
+              key: "total_aset"
+              format: "currency"
+            - label: "Jumlah Pegawai"
+              key: "jumlah_pegawai"
+              format: "integer"
+      - pengumuman_carousel:
+          items_source: "announcements"
+          visible_max: 5
+          auto_play_ms: 5000
+      - berita_terbaru:
+          source: "news"
+          limit: 4
+      - galeri_foto_terbaru:
+          source: "photos"
+          limit: 6
+      - sosial_media:
+          links:
+            - type: "facebook"
+              url: "https://facebook.com/bpkpad.tapsel"
+            - type: "instagram"
+              url: "https://instagram.com/bpkpad.tapsel"
+            - type: "twitter"
+              url: "https://twitter.com/bpkpadtapsel"
+            - type: "youtube"
+              url: "https://youtube.com/@bpkpadtapsel"
+  profil:
+    sections:
+      - visi_misi
+      - sejarah
+      - tupoksi
+      - struktur_organisasi:
+          diagram: "images/struktur-organisasi.png"
+          units:
+            - nama: "Bidang Anggaran"
+              deskripsi: "Mengelola perencanaan dan pelaksanaan anggaran daerah."
+            - nama: "Bidang Aset"
+              deskripsi: "Pengelolaan barang milik daerah dan aset tetap."
+            - nama: "Bidang Akuntansi"
+              deskripsi: "Penyusunan laporan keuangan dan akuntansi pemerintah daerah."
+      - profil_pejabat:
+          roles: ["Kepala BPKPAD", "Sekretaris", "Kabid", "Kasubbag"]
+  berita:
+    list:
+      page_size: 12
+      filters:
+        kategori: ["Pengumuman", "Kegiatan", "Informasi", "Pencapaian"]
+        waktu: ["bulan", "tahun"]
+      search: { by: ["judul", "konten"] }
+    detail:
+      fields: ["judul", "tanggal", "penulis", "kategori", "featured_image", "konten_rich", "tag"]
+      sidebar:
+        related_news: 4
+        share: ["facebook", "twitter", "whatsapp"]
+  informasi_layanan:
+    sections:
+      - pajak_daerah:
+          isi: ["jenis_pajak", "cara_pembayaran", "formulir"]
+      - retribusi_daerah
+      - aset_daerah
+      - download_center:
+          types: ["regulasi", "formulir", "laporan_keuangan"]
+      - faq
+  galeri:
+    foto:
+      layout: "grid"
+      lightbox: true
+      filter: ["tahun", "event"]
+    video:
+      source: "youtube_embed"
+  kontak:
+    fields: ["nama", "email", "subjek", "pesan"]
+    validation:
+      nama: { required: true, min: 2 }
+      email: { required: true, format: "email" }
+      subjek: { required: true, min: 3 }
+      pesan: { required: true, min: 10 }
+    info:
+      alamat: "Jl. Contoh No. 1, Sipirok, Kab. Tapanuli Selatan"
+      telepon: "+62-xxx-xxxx-xxxx"
+      fax: "+62-xxx-xxxx-xxxx"
+      email: "humas@bpkpad.tapsel.go.id"
+      jam_operasional: "Senin–Jumat 08:00–16:00 WIB"
+    maps_embed: "https://www.google.com/maps/embed?..."
+
+ ui_komponen:
+  - Navbar (sticky, breadcrumbs, keyboard-navigation)
+  - HeroSection (responsive image, alt text)
+  - GreetingCard (foto + teks sambutan)
+  - StatCards (animasi ringan, nilai dari API)
+  - AnnouncementCarousel (auto play + pause on hover)
+  - NewsList (grid/list 4 item di beranda, 12 per halaman di daftar)
+  - GalleryGrid (lazy load, lightbox)
+  - Pagination (a11y labels)
+  - Filters (checkbox/select dengan label jelas)
+  - SearchBar (aria-label)
+  - SocialLinks (ikon dengan sr-only label)
+  - Footer (informasi legal + tahun dinamis)
+  - Breadcrumbs (schema.org BreadcrumbList)
+
+ data_model:
+  NewsArticle:
+    fields:
+      - { name: id, type: uuid }
+      - { name: slug, type: string, unique: true }
+      - { name: judul, type: string }
+      - { name: konten, type: richtext }
+      - { name: kategori, type: enum, values: [Pengumuman, Kegiatan, Informasi, Pencapaian] }
+      - { name: penulis, type: string }
+      - { name: featured_image, type: image }
+      - { name: tags, type: string[], optional: true }
+      - { name: published_at, type: datetime }
+      - { name: updated_at, type: datetime }
+  Announcement:
+    fields:
+      - { name: id, type: uuid }
+      - { name: judul, type: string }
+      - { name: isi, type: text }
+      - { name: mulai, type: datetime }
+      - { name: selesai, type: datetime, optional: true }
+  Photo:
+    fields:
+      - { name: id, type: uuid }
+      - { name: url, type: image }
+      - { name: judul, type: string }
+      - { name: event, type: string, optional: true }
+      - { name: tahun, type: number }
+      - { name: diunggah_pada, type: datetime }
+  Video:
+    fields:
+      - { name: id, type: uuid }
+      - { name: youtube_id, type: string }
+      - { name: judul, type: string }
+      - { name: diunggah_pada, type: datetime }
+  Document:
+    fields:
+      - { name: id, type: uuid }
+      - { name: judul, type: string }
+      - { name: tipe, type: enum, values: [regulasi, formulir, laporan_keuangan] }
+      - { name: file_url, type: url }
+      - { name: ukuran, type: string, optional: true }
+      - { name: published_at, type: datetime }
+  LeaderProfile:
+    fields:
+      - { name: id, type: uuid }
+      - { name: nama, type: string }
+      - { name: jabatan, type: string }
+      - { name: foto, type: image }
+      - { name: bio, type: text }
+  OrgUnit:
+    fields:
+      - { name: id, type: uuid }
+      - { name: nama, type: string }
+      - { name: deskripsi, type: text }
+      - { name: parent_id, type: uuid, optional: true }
+  Stats:
+    fields:
+      - { name: total_pad, type: number }
+      - { name: total_aset, type: number }
+      - { name: jumlah_pegawai, type: number }
+  ContactSubmission:
+    fields:
+      - { name: id, type: uuid }
+      - { name: nama, type: string }
+      - { name: email, type: string }
+      - { name: subjek, type: string }
+      - { name: pesan, type: text }
+      - { name: created_at, type: datetime }
+
+ api_spesifikasi:
+  base: "/api"
+  endpoints:
+    - method: GET
+      path: "/news"
+      query: { page: number, pageSize: number, kategori: string, bulan: number, tahun: number, q: string }
+      response: { items: NewsArticle[], total: number }
+    - method: GET
+      path: "/news/{slug}"
+      response: NewsArticle
+    - method: GET
+      path: "/announcements"
+      response: Announcement[]
+    - method: GET
+      path: "/photos"
+      query: { limit: number, tahun: number, event: string }
+      response: Photo[]
+    - method: GET
+      path: "/videos"
+      response: Video[]
+    - method: GET
+      path: "/documents"
+      query: { tipe: string }
+      response: Document[]
+    - method: GET
+      path: "/stats"
+      response: Stats
+    - method: POST
+      path: "/contact"
+      body: ContactSubmission
+      security: { csrf: true, rate_limit_per_ip: 10_per_hour }
+      response: { ok: boolean, message: string }
+
+ seo:
+  meta_defaults:
+    title_suffix: " | BPKPAD Kab. Tapanuli Selatan"
+    description: "Website resmi BPKPAD Kab. Tapanuli Selatan: informasi pajak, retribusi, aset daerah, berita, dan layanan publik."
+    keywords: ["BPKPAD", "Tapanuli Selatan", "pajak daerah", "aset daerah", "retribusi", "keuangan daerah"]
+  open_graph:
+    site_name: "BPKPAD Kab. Tapanuli Selatan"
+    type: "website"
+  structured_data:
+    organization: "GovernmentOrganization"
+    breadcrumb: true
+    news_article: true
+    faq_page: true
+  sitemap_xml: true
+  robots_txt: "Allow: /\nDisallow: /admin"
+
+ aksesibilitas:
+  standard: "WCAG 2.1 Level A (target AA)"
+  requirements:
+    - Semua gambar memiliki alt text deskriptif.
+    - Kontras warna minimal 4.5:1.
+    - Navigasi keyboard penuh, fokus terlihat, skip-to-content.
+    - Heading terstruktur (H1-H6) dan landmark ARIA sewajarnya.
+    - Link teks deskriptif (hindari "klik di sini").
+    - Form dengan label terasosiasi dan error message yang jelas.
+
+ performa:
+  budgets:
+    lcp: "<= 2.5s"
+    tti: "<= 3s"
+    cls: "< 0.1"
+    ttfb: "< 200ms"
+  strategi:
+    - Optimasi gambar (WebP/AVIF), ukuran sesuai viewport, lazy loading.
+    - Caching efektif (HTTP cache, CDN), prefetch/presconnect.
+    - Code splitting, minifikasi, tree-shaking.
+    - Lazy load komponen non-kritis.
+
+ keamanan:
+  - Validasi input di client dan server.
+  - Proteksi CSRF untuk form kontak POST.
+  - Rate limiting untuk endpoint publik yang menerima input.
+  - Security headers (CSP, HSTS, X-Frame-Options, X-Content-Type-Options).
+  - Sanitasi konten berita rich text untuk mencegah XSS.
+
+ pengujian:
+  unit:
+    target_coverage: ">= 80%"
+    area: ["utilitas tanggal/format", "perhitungan statistik", "filtering/pencarian"]
+  integration:
+    area: ["API /news", "/news/{slug}", "/contact", "/documents"]
+  e2e:
+    journeys: ["buka beranda", "baca berita", "download dokumen", "kirim form kontak"]
+  aksesibilitas:
+    tools: ["axe-core", "Wave"]
+
+ analytics_monitoring:
+  ga4: true
+  gsc: true
+  uptime_monitoring: true
+
+ acceptance_criteria:
+  responsif:
+    breakpoints: [320, 768, 1920]
+  loading_time: "< 3 detik pada koneksi 4G baik"
+  images_optimized: true
+  lazy_loading: true
+  seo_friendly: true
+  breadcrumbs: true
+  footer_copyright:
+    text: "© BPKPAD Kab. Tapanuli Selatan {{year}}"
+  keyboard_navigation: true
+
+ konten_placeholder:
+  berita_dummy: 8
+  foto_dummy: 12
+  dokumen_dummy: 6
+
+ implementasi_rekomendasi:
+  stack: "Next.js + Tailwind CSS (opsi: Astro/React/Vue sesuai preferensi)"
+  rendering: "SSG untuk halaman statis, ISR/SSR untuk Berita"
+  cms_opsi: ["Strapi", "Directus", "Sanity", "WordPress (headless)"]
+  i18n: false
