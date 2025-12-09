@@ -3,11 +3,12 @@ import { prisma } from '@/lib/prisma';
 
 export async function GET(
     request: NextRequest,
-    { params }: { params: { id: string } }
+    { params }: { params: Promise<{ id: string }> }
 ) {
+    const { id } = await params;
     try {
         const kontak = await prisma.kontak.findUnique({
-            where: { id: parseInt(params.id) },
+            where: { id: parseInt(id) },
         });
 
         if (!kontak) {
@@ -22,12 +23,13 @@ export async function GET(
 
 export async function PUT(
     request: NextRequest,
-    { params }: { params: { id: string } }
+    { params }: { params: Promise<{ id: string }> }
 ) {
+    const { id } = await params;
     try {
         const body = await request.json();
         const kontak = await prisma.kontak.update({
-            where: { id: parseInt(params.id) },
+            where: { id: parseInt(id) },
             data: {
                 kategori: body.kategori,
                 nama: body.nama,
@@ -51,11 +53,12 @@ export async function PUT(
 
 export async function DELETE(
     request: NextRequest,
-    { params }: { params: { id: string } }
+    { params }: { params: Promise<{ id: string }> }
 ) {
+    const { id } = await params;
     try {
         await prisma.kontak.delete({
-            where: { id: parseInt(params.id) },
+            where: { id: parseInt(id) },
         });
         return NextResponse.json({ message: 'Kontak deleted successfully' });
     } catch (error) {

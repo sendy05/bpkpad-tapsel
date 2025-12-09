@@ -4,12 +4,13 @@ import { prisma } from '@/lib/prisma';
 // GET - Public API to fetch single layanan
 export async function GET(
     request: NextRequest,
-    { params }: { params: { id: string } }
+    { params }: { params: Promise<{ id: string }> }
 ) {
+    const { id } = await params;
     try {
         const layanan = await prisma.layanan.findUnique({
             where: {
-                id: parseInt(params.id),
+                id: parseInt(id),
                 status: 1, // Only active layanan
             },
         });

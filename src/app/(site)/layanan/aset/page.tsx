@@ -3,6 +3,8 @@ import Link from 'next/link';
 import { Building2, ArrowRight, Clock, FileText } from 'lucide-react';
 import { prisma } from '@/lib/prisma';
 
+export const dynamic = 'force-dynamic';
+
 export const metadata: Metadata = {
     title: 'Layanan Pengelolaan Aset - BPKPAD',
     description:

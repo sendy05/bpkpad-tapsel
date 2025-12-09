@@ -3,11 +3,12 @@ import { prisma } from '@/lib/prisma';
 
 export async function GET(
     request: NextRequest,
-    { params }: { params: { id: string } }
+    { params }: { params: Promise<{ id: string }> }
 ) {
+    const { id } = await params;
     try {
         const agenda = await prisma.agenda.findUnique({
-            where: { id: parseInt(params.id) },
+            where: { id: parseInt(id) },
         });
 
         if (!agenda) {
@@ -22,12 +23,13 @@ export async function GET(
 
 export async function PUT(
     request: NextRequest,
-    { params }: { params: { id: string } }
+    { params }: { params: Promise<{ id: string }> }
 ) {
+    const { id } = await params;
     try {
         const body = await request.json();
         const agenda = await prisma.agenda.update({
-            where: { id: parseInt(params.id) },
+            where: { id: parseInt(id) },
             data: {
                 judul: body.judul,
                 deskripsi: body.deskripsi || null,
@@ -50,11 +52,12 @@ export async function PUT(
 
 export async function DELETE(
     request: NextRequest,
-    { params }: { params: { id: string } }
+    { params }: { params: Promise<{ id: string }> }
 ) {
+    const { id } = await params;
     try {
         await prisma.agenda.delete({
-            where: { id: parseInt(params.id) },
+            where: { id: parseInt(id) },
         });
         return NextResponse.json({ message: 'Agenda deleted successfully' });
     } catch (error) {

@@ -3,7 +3,7 @@ import { orgUnits } from '@/data/orgUnits';
 import type { Metadata } from 'next';
 import { prisma } from '@/lib/db';
 
-export const metadata: Metadata = {
+export const dynamic = 'force-dynamic';export const metadata: Metadata = {
     title: 'Profil BPKPAD',
     description: 'Visi, misi, sejarah, tupoksi, struktur organisasi, dan profil pejabat BPKPAD Kab. Tapanuli Selatan.'
 };

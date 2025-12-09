@@ -4,11 +4,12 @@ import { prisma } from '@/lib/prisma';
 // GET single informasi publik
 export async function GET(
     request: NextRequest,
-    { params }: { params: { id: string } }
+    { params }: { params: Promise<{ id: string }> }
 ) {
+    const { id } = await params;
     try {
         const informasi = await prisma.informasiPublik.findUnique({
-            where: { id: parseInt(params.id) }
+            where: { id: parseInt(id) }
         });
 
         if (!informasi) {
@@ -31,8 +32,9 @@ export async function GET(
 // PUT update informasi publik
 export async function PUT(
     request: NextRequest,
-    { params }: { params: { id: string } }
+    { params }: { params: Promise<{ id: string }> }
 ) {
+    const { id } = await params;
     try {
         const body = await request.json();
         const { kategori, judul, ringkasan, pejabatPengelola, tanggalPublikasi, fileUrl, status } = body;
@@ -53,7 +55,7 @@ export async function PUT(
         }
 
         const informasi = await prisma.informasiPublik.update({
-            where: { id: parseInt(params.id) },
+            where: { id: parseInt(id) },
             data: {
                 kategori,
                 judul,
@@ -80,11 +82,12 @@ export async function PUT(
 // DELETE informasi publik
 export async function DELETE(
     request: NextRequest,
-    { params }: { params: { id: string } }
+    { params }: { params: Promise<{ id: string }> }
 ) {
+    const { id } = await params;
     try {
         await prisma.informasiPublik.delete({
-            where: { id: parseInt(params.id) }
+            where: { id: parseInt(id) }
         });
 
         return NextResponse.json({ message: 'Informasi publik berhasil dihapus' });

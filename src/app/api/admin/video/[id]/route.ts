@@ -3,11 +3,12 @@ import { prisma } from '@/lib/prisma';
 
 export async function GET(
     request: NextRequest,
-    { params }: { params: { id: string } }
+    { params }: { params: Promise<{ id: string }> }
 ) {
+    const { id } = await params;
     try {
         const video = await prisma.tbl_video.findUnique({
-            where: { id: params.id },
+            where: { id: id },
         });
 
         if (!video) {
@@ -22,12 +23,13 @@ export async function GET(
 
 export async function PUT(
     request: NextRequest,
-    { params }: { params: { id: string } }
+    { params }: { params: Promise<{ id: string }> }
 ) {
+    const { id } = await params;
     try {
         const body = await request.json();
         const video = await prisma.tbl_video.update({
-            where: { id: params.id },
+            where: { id: id },
             data: {
                 video: body.video,
                 keterangan: body.keterangan || null,
@@ -41,11 +43,12 @@ export async function PUT(
 
 export async function DELETE(
     request: NextRequest,
-    { params }: { params: { id: string } }
+    { params }: { params: Promise<{ id: string }> }
 ) {
+    const { id } = await params;
     try {
         await prisma.tbl_video.delete({
-            where: { id: params.id },
+            where: { id: id },
         });
         return NextResponse.json({ message: 'Video deleted successfully' });
     } catch (error) {

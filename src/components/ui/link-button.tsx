@@ -1,6 +1,6 @@
 import Link, { LinkProps } from 'next/link';
 import * as React from 'react';
-import { buttonVariants } from './Button';
+import { buttonVariants } from './button';
 import { cn } from './utils';
 import type { VariantProps } from 'class-variance-authority';
 

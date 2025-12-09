@@ -14,8 +14,9 @@ async function getStatistik(id: string) {
     return statistik;
 }
 
-export default async function EditStatistikPage({ params }: { params: { id: string } }) {
-    const statistik = await getStatistik(params.id);
+export default async function EditStatistikPage({ params }: { params: Promise<{ id: string }> }) {
+    const { id } = await params;
+    const statistik = await getStatistik(id);
 
     return (
         <div className="space-y-6">

@@ -122,7 +122,7 @@ export default async function AgendaAdminPage() {
                                         <div className="flex flex-col items-center justify-center">
                                             <div className="text-6xl mb-4">📅</div>
                                             <p className="text-lg font-medium">Belum ada data agenda</p>
-                                            <p className="text-sm mt-2">Klik tombol "Tambah Agenda" untuk menambahkan</p>
+                                            <p className="text-sm mt-2">Klik tombol &quot;Tambah Agenda&quot; untuk menambahkan</p>
                                         </div>
                                     </td>
                                 </tr>

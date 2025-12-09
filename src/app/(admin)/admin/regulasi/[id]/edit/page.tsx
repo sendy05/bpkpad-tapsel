@@ -14,8 +14,9 @@ async function getRegulasi(no_dokumen: string) {
     return regulasi;
 }
 
-export default async function EditRegulasiPage({ params }: { params: { id: string } }) {
-    const regulasi = await getRegulasi(params.id);
+export default async function EditRegulasiPage({ params }: { params: Promise<{ id: string }> }) {
+    const { id } = await params;
+    const regulasi = await getRegulasi(id);
 
     return (
         <div className="space-y-6">

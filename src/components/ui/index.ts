@@ -1,11 +1,10 @@
-export { Badge } from './Badge';
-export type { BadgeProps } from './Badge';
+export { Badge } from './badge';
+export type { BadgeProps } from './badge';
 
-export { Alert } from './Alert';
-export type { AlertProps } from './Alert';
+export { Alert } from './alert';
+export type { AlertProps } from './alert';
 
-export { Card, CardHeader, CardBody, CardFooter } from './Card';
-export type { CardProps } from './Card';
+export { Card, CardHeader, CardContent } from './card';
 
-export { Button } from './Button';
-export type { ButtonProps } from './Button';
+export { Button } from './button';
+export type { ButtonProps } from './button';

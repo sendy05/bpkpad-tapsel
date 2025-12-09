@@ -2,6 +2,8 @@ import { prisma } from '@/lib/prisma';
 import Link from 'next/link';
 import type { Metadata } from 'next';
 
+export const dynamic = 'force-dynamic';
+
 export const metadata: Metadata = {
     title: 'Jenis Pajak Daerah',
     description: 'Informasi lengkap tentang jenis pajak daerah Kabupaten Tapanuli Selatan',

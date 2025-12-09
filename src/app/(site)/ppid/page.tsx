@@ -2,6 +2,8 @@ import { prisma } from '@/lib/prisma';
 import Link from 'next/link';
 import type { Metadata } from 'next';
 
+export const dynamic = 'force-dynamic';
+
 export const metadata: Metadata = {
     title: 'Informasi Publik - PPID',
     description: 'Pusat informasi publik BPKPAD Tapanuli Selatan sesuai UU Keterbukaan Informasi Publik',

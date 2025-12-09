@@ -14,8 +14,9 @@ async function getAgenda(id: string) {
     return agenda;
 }
 
-export default async function EditAgendaPage({ params }: { params: { id: string } }) {
-    const agenda = await getAgenda(params.id);
+export default async function EditAgendaPage({ params }: { params: Promise<{ id: string }> }) {
+    const { id } = await params;
+    const agenda = await getAgenda(id);
 
     return (
         <div className="space-y-6">

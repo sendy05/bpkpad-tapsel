@@ -128,7 +128,7 @@ export default async function StatistikAdminPage() {
                                         <div className="flex flex-col items-center justify-center">
                                             <div className="text-6xl mb-4">📊</div>
                                             <p className="text-lg font-medium">Belum ada data statistik</p>
-                                            <p className="text-sm mt-2">Klik tombol "Tambah Data" untuk menambahkan</p>
+                                            <p className="text-sm mt-2">Klik tombol &quot;Tambah Data&quot; untuk menambahkan</p>
                                         </div>
                                     </td>
                                 </tr>

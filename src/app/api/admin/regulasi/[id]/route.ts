@@ -3,11 +3,12 @@ import { prisma } from '@/lib/prisma';
 
 export async function GET(
     request: NextRequest,
-    { params }: { params: { id: string } }
+    { params }: { params: Promise<{ id: string }> }
 ) {
+    const { id } = await params;
     try {
         const regulasi = await prisma.dokumen.findUnique({
-            where: { no_dokumen: params.id },
+            where: { no_dokumen: id },
         });
 
         if (!regulasi) {
@@ -22,12 +23,13 @@ export async function GET(
 
 export async function PUT(
     request: NextRequest,
-    { params }: { params: { id: string } }
+    { params }: { params: Promise<{ id: string }> }
 ) {
+    const { id } = await params;
     try {
         const body = await request.json();
         const regulasi = await prisma.dokumen.update({
-            where: { no_dokumen: params.id },
+            where: { no_dokumen: id },
             data: {
                 no_dokumen: body.no_dokumen,
                 judul: body.judul,
@@ -45,11 +47,12 @@ export async function PUT(
 
 export async function DELETE(
     request: NextRequest,
-    { params }: { params: { id: string } }
+    { params }: { params: Promise<{ id: string }> }
 ) {
+    const { id } = await params;
     try {
         await prisma.dokumen.delete({
-            where: { no_dokumen: params.id },
+            where: { no_dokumen: id },
         });
         return NextResponse.json({ message: 'Regulasi deleted successfully' });
     } catch (error) {

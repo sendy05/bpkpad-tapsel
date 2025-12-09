@@ -5,11 +5,12 @@ import { prisma } from '@/lib/prisma';
 // GET - Get single layanan by ID
 export async function GET(
     request: NextRequest,
-    { params }: { params: { id: string } }
+    { params }: { params: Promise<{ id: string }> }
 ) {
+    const { id } = await params;
     try {
         const layanan = await prisma.layanan.findUnique({
-            where: { id: parseInt(params.id) },
+            where: { id: parseInt(id) },
         });
 
         if (!layanan) {
@@ -29,8 +30,9 @@ export async function GET(
 // PUT - Update layanan
 export async function PUT(
     request: NextRequest,
-    { params }: { params: { id: string } }
+    { params }: { params: Promise<{ id: string }> }
 ) {
+    const { id } = await params;
     try {
         const body = await request.json();
         const {
@@ -62,7 +64,7 @@ export async function PUT(
         }
 
         const layanan = await prisma.layanan.update({
-            where: { id: parseInt(params.id) },
+            where: { id: parseInt(id) },
             data: {
                 kategori,
                 judul,
@@ -92,11 +94,12 @@ export async function PUT(
 // DELETE - Delete layanan
 export async function DELETE(
     request: NextRequest,
-    { params }: { params: { id: string } }
+    { params }: { params: Promise<{ id: string }> }
 ) {
+    const { id } = await params;
     try {
         await prisma.layanan.delete({
-            where: { id: parseInt(params.id) },
+            where: { id: parseInt(id) },
         });
 
         return NextResponse.json({ message: 'Layanan berhasil dihapus' });

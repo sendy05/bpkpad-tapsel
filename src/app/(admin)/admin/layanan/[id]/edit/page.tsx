@@ -16,15 +16,16 @@ import {
 } from 'lucide-react';
 
 interface Props {
-    params: {
+    params: Promise<{
         id: string;
-    };
+    }>;
 }
 
 export default function EditLayananPage({ params }: Props) {
     const router = useRouter();
     const [loading, setLoading] = useState(false);
     const [fetching, setFetching] = useState(true);
+    const [layananId, setLayananId] = useState<string>('');
     const [formData, setFormData] = useState({
         kategori: 'retribusi',
         judul: '',
@@ -39,12 +40,17 @@ export default function EditLayananPage({ params }: Props) {
     });
 
     useEffect(() => {
-        fetchLayanan();
-    }, []);
+        const initParams = async () => {
+            const { id } = await params;
+            setLayananId(id);
+            await fetchLayanan(id);
+        };
+        initParams();
+    }, [params]);
 
-    const fetchLayanan = async () => {
+    const fetchLayanan = async (id: string) => {
         try {
-            const response = await fetch(`/api/admin/layanan/${params.id}`);
+            const response = await fetch(`/api/admin/layanan/${id}`);
             if (response.ok) {
                 const data = await response.json();
                 setFormData({
@@ -89,7 +95,7 @@ export default function EditLayananPage({ params }: Props) {
         setLoading(true);
 
         try {
-            const response = await fetch(`/api/admin/layanan/${params.id}`, {
+            const response = await fetch(`/api/admin/layanan/${layananId}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',

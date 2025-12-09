@@ -3,9 +3,10 @@ import { redirect, notFound } from 'next/navigation';
 import { prisma } from '@/lib/db';
 import StrukturForm from '../../StrukturForm';
 
-export default async function EditStrukturPage({ params }: { params: { id: string } }) {
+export default async function EditStrukturPage({ params }: { params: Promise<{ id: string }> }) {
+    const { id } = await params;
     const struktur = await prisma.struktur_organisasi.findUnique({
-        where: { id: parseInt(params.id) }
+        where: { id: parseInt(id) }
     });
 
     if (!struktur) notFound();

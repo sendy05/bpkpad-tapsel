@@ -14,8 +14,9 @@ async function getVideo(id: string) {
     return video;
 }
 
-export default async function EditVideoPage({ params }: { params: { id: string } }) {
-    const video = await getVideo(params.id);
+export default async function EditVideoPage({ params }: { params: Promise<{ id: string }> }) {
+    const { id } = await params;
+    const video = await getVideo(id);
 
     return (
         <div className="space-y-6">

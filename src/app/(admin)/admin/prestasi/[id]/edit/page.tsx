@@ -2,13 +2,14 @@ import { redirect, notFound } from 'next/navigation';
 import { prisma } from '@/lib/prisma';
 import PrestasiForm from '../../PrestasiForm';
 
-export default async function EditPrestasiPage({ params }: { params: { id: string } }) {
+export default async function EditPrestasiPage({ params }: { params: Promise<{ id: string }> }) {
+    const { id } = await params;
     // Auth is handled by admin layout
     // const session = await auth();
     // if (!session) redirect('/admin/login');
 
     const prestasi = await prisma.prestasi_organisasi.findUnique({
-        where: { id: parseInt(params.id) }
+        where: { id: parseInt(id) }
     });
 
     if (!prestasi) notFound();

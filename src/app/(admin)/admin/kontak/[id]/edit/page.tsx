@@ -14,8 +14,9 @@ async function getKontak(id: string) {
     return kontak;
 }
 
-export default async function EditKontakPage({ params }: { params: { id: string } }) {
-    const kontak = await getKontak(params.id);
+export default async function EditKontakPage({ params }: { params: Promise<{ id: string }> }) {
+    const { id } = await params;
+    const kontak = await getKontak(id);
 
     return (
         <div className="space-y-6">

@@ -2,7 +2,8 @@ import { NextResponse } from 'next/server';
 // Auth handled by middleware
 import { prisma } from '@/lib/db';
 
-export async function PUT(request: Request, { params }: { params: { id: string } }) {
+export async function PUT(request: Request, { params }: { params: Promise<{ id: string }> }) {
+    const { id } = await params;
     try {
         const body = await request.json();
         const { judul, kategori, nomor, tgl_terbit, deskripsi, file, status } = body;
@@ -12,7 +13,7 @@ export async function PUT(request: Request, { params }: { params: { id: string }
         }
 
         const sop = await prisma.sop_dokumen.update({
-            where: { id: parseInt(params.id) },
+            where: { id: parseInt(id) },
             data: {
                 judul,
                 kategori,
@@ -33,10 +34,11 @@ export async function PUT(request: Request, { params }: { params: { id: string }
     }
 }
 
-export async function DELETE(request: Request, { params }: { params: { id: string } }) {
+export async function DELETE(request: Request, { params }: { params: Promise<{ id: string }> }) {
+    const { id } = await params;
     try {
         await prisma.sop_dokumen.delete({
-            where: { id: parseInt(params.id) }
+            where: { id: parseInt(id) }
         });
 
         return NextResponse.json({ message: 'SOP berhasil dihapus' });

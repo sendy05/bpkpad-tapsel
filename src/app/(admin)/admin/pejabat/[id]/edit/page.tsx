@@ -2,12 +2,13 @@ import { redirect, notFound } from 'next/navigation';
 import { prisma } from '@/lib/prisma';
 import PejabatForm from '../../PejabatForm';
 
-export default async function EditPejabatPage({ params }: { params: { id: string } }) {
+export default async function EditPejabatPage({ params }: { params: Promise<{ id: string }> }) {
+    const { id } = await params;
     // const session = await auth();
     // if (!session) redirect('/admin/login');
 
     const pejabat = await prisma.pejabat.findUnique({
-        where: { id: parseInt(params.id) }
+        where: { id: parseInt(id) }
     });
 
     if (!pejabat) notFound();

@@ -2,9 +2,10 @@ import { prisma } from '@/lib/prisma';
 import { notFound } from 'next/navigation';
 import InformasiPublikForm from '../../InformasiPublikForm';
 
-export default async function EditInformasiPublikPage({ params }: { params: { id: string } }) {
+export default async function EditInformasiPublikPage({ params }: { params: Promise<{ id: string }> }) {
+    const { id } = await params;
     const informasi = await prisma.informasiPublik.findUnique({
-        where: { id: parseInt(params.id) }
+        where: { id: parseInt(id) }
     });
 
     if (!informasi) {

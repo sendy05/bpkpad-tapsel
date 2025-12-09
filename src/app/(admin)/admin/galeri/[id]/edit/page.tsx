@@ -1,5 +1,5 @@
 import { notFound } from 'next/navigation';
-import prisma from '@/lib/prisma';
+import { prisma } from '@/lib/prisma';
 import GaleriForm from '../../GaleriForm';
 
 async function getGaleri(id: string) {
@@ -14,8 +14,9 @@ async function getGaleri(id: string) {
     return galeri;
 }
 
-export default async function EditGaleriPage({ params }: { params: { id: string } }) {
-    const galeri = await getGaleri(params.id);
+export default async function EditGaleriPage({ params }: { params: Promise<{ id: string }> }) {
+    const { id } = await params;
+    const galeri = await getGaleri(id);
 
     return (
         <div className="space-y-6">

@@ -9,6 +9,8 @@ import {
     FileText,
     CheckCircle,
 } from 'lucide-react';
+
+export const dynamic = 'force-dynamic';
 import Breadcrumbs from '@/components/Breadcrumbs';
 
 export const metadata: Metadata = {

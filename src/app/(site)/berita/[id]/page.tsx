@@ -3,9 +3,10 @@ import { notFound } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
 
-export async function generateMetadata({ params }: { params: { id: string } }) {
+export async function generateMetadata({ params }: { params: Promise<{ id: string }> }) {
+    const { id } = await params;
     const berita = await prisma.tbl_berita.findUnique({
-        where: { id_berita: params.id }
+        where: { id_berita: id }
     });
 
     return {
@@ -14,9 +15,10 @@ export async function generateMetadata({ params }: { params: { id: string } }) {
     };
 }
 
-export default async function BeritaDetailPage({ params }: { params: { id: string } }) {
+export default async function BeritaDetailPage({ params }: { params: Promise<{ id: string }> }) {
+    const { id } = await params;
     const berita = await prisma.tbl_berita.findUnique({
-        where: { id_berita: params.id }
+        where: { id_berita: id }
     });
 
     if (!berita) {
@@ -25,14 +27,14 @@ export default async function BeritaDetailPage({ params }: { params: { id: strin
 
     // Increment view counter
     await prisma.tbl_berita.update({
-        where: { id_berita: params.id },
+        where: { id_berita: id },
         data: { baca: berita.baca + 1 }
     });
 
     // Get related news
     const relatedNews = await prisma.tbl_berita.findMany({
         where: {
-            id_berita: { not: params.id },
+            id_berita: { not: id },
             kategori: berita.kategori
         },
         take: 3,

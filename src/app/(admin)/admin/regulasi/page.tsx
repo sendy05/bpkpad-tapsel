@@ -114,7 +114,7 @@ export default async function RegulasiAdminPage() {
                                         <div className="flex flex-col items-center justify-center">
                                             <div className="text-6xl mb-4">📋</div>
                                             <p className="text-lg font-medium">Belum ada data regulasi</p>
-                                            <p className="text-sm mt-2">Klik tombol "Tambah Regulasi" untuk menambahkan</p>
+                                            <p className="text-sm mt-2">Klik tombol &quot;Tambah Regulasi&quot; untuk menambahkan</p>
                                         </div>
                                     </td>
                                 </tr>

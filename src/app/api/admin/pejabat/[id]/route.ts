@@ -3,7 +3,8 @@ import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/db';
 
 // PUT - Update pejabat
-export async function PUT(request: Request, { params }: { params: { id: string } }) {
+export async function PUT(request: Request, { params }: { params: Promise<{ id: string }> }) {
+    const { id } = await params;
     try {
         const body = await request.json();
         const { nama, jabatan, nip, email, telepon, urutan, status, foto } = body;
@@ -13,7 +14,7 @@ export async function PUT(request: Request, { params }: { params: { id: string }
         }
 
         const pejabat = await prisma.pejabat.update({
-            where: { id: parseInt(params.id) },
+            where: { id: parseInt(id) },
             data: {
                 nama,
                 jabatan,
@@ -36,10 +37,11 @@ export async function PUT(request: Request, { params }: { params: { id: string }
 }
 
 // DELETE - Delete pejabat
-export async function DELETE(request: Request, { params }: { params: { id: string } }) {
+export async function DELETE(request: Request, { params }: { params: Promise<{ id: string }> }) {
+    const { id } = await params;
     try {
         await prisma.pejabat.delete({
-            where: { id: parseInt(params.id) }
+            where: { id: parseInt(id) }
         });
 
         return NextResponse.json({ message: 'Pejabat berhasil dihapus' });

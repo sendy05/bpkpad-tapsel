@@ -3,9 +3,10 @@ import { redirect, notFound } from 'next/navigation';
 import { prisma } from '@/lib/db';
 import SopForm from '../../SopForm';
 
-export default async function EditSopPage({ params }: { params: { id: string } }) {
+export default async function EditSopPage({ params }: { params: Promise<{ id: string }> }) {
+    const { id } = await params;
     const sop = await prisma.sop_dokumen.findUnique({
-        where: { id: parseInt(params.id) }
+        where: { id: parseInt(id) }
     });
 
     if (!sop) notFound();

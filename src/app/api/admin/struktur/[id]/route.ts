@@ -2,7 +2,8 @@ import { NextResponse } from 'next/server';
 // Auth handled by middleware
 import { prisma } from '@/lib/db';
 
-export async function PUT(request: Request, { params }: { params: { id: string } }) {
+export async function PUT(request: Request, { params }: { params: Promise<{ id: string }> }) {
+    const { id } = await params;
     try {
         const body = await request.json();
         const { gambar, keterangan } = body;
@@ -12,7 +13,7 @@ export async function PUT(request: Request, { params }: { params: { id: string }
         }
 
         const struktur = await prisma.struktur_organisasi.update({
-            where: { id: parseInt(params.id) },
+            where: { id: parseInt(id) },
             data: {
                 gambar,
                 keterangan: keterangan || null,
@@ -28,10 +29,11 @@ export async function PUT(request: Request, { params }: { params: { id: string }
     }
 }
 
-export async function DELETE(request: Request, { params }: { params: { id: string } }) {
+export async function DELETE(request: Request, { params }: { params: Promise<{ id: string }> }) {
+    const { id } = await params;
     try {
         await prisma.struktur_organisasi.delete({
-            where: { id: parseInt(params.id) }
+            where: { id: parseInt(id) }
         });
 
         return NextResponse.json({ message: 'Struktur berhasil dihapus' });

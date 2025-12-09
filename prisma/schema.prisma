@@ -3,7 +3,7 @@ generator client {
 }
 
 datasource db {
-    provider = "mysql"
+    provider = "postgresql"
     url      = env("DATABASE_URL")
 }
 
@@ -20,7 +20,7 @@ model admin {
     level        Int?
     id_grup      String?   @db.Char(30)
     status       Int
-    date_create  DateTime? @db.DateTime(0)
+    date_create  DateTime? @db.Timestamp
     lock_user    Int
     foto         String?   @db.VarChar(100)
     tgl_lahir    DateTime? @db.Date
@@ -93,7 +93,7 @@ model msclient {
     logo          String?   @db.VarChar(100)
     icon          String?   @db.VarChar(100)
     banner        String?   @db.VarChar(100)
-    tgl_update    DateTime? @db.DateTime(0)
+    tgl_update    DateTime? @db.Timestamp
     user          String?   @db.VarChar(100)
     kepala_daerah String?   @db.VarChar(100)
 }
@@ -131,14 +131,14 @@ model tbl_aplikasi {
     nm_aplikasi String?   @db.VarChar(100)
     icon        String?   @db.VarChar(100)
     link        String?   @db.VarChar(100)
-    tgl_update  DateTime? @db.DateTime(0)
+    tgl_update  DateTime? @db.Timestamp
     user        String?   @db.VarChar(100)
 }
 
 // Tabel Berita
 model tbl_berita {
     id_berita  String    @id @db.VarChar(100)
-    tgl_update DateTime? @db.DateTime(0)
+    tgl_update DateTime? @db.Timestamp
     user       String?   @db.VarChar(100)
     judul      String?   @db.VarChar(225)
     isi        String?   @db.Text
@@ -164,7 +164,7 @@ model tbl_fakultas {
     nm_fakultas String?   @db.VarChar(225)
     keterangan  String?   @db.Text
     foto        String?   @db.VarChar(100)
-    tgl_update  DateTime? @db.DateTime(0)
+    tgl_update  DateTime? @db.Timestamp
     user        String?   @db.VarChar(100)
 }
 
@@ -173,7 +173,7 @@ model tbl_galery {
     id         Int       @id @default(autoincrement())
     foto       String?   @db.VarChar(100)
     keterangan String?   @db.Text
-    tgl_update DateTime? @db.DateTime(0)
+    tgl_update DateTime? @db.Timestamp
     user       String?   @db.VarChar(100)
 }
 
@@ -184,7 +184,7 @@ model tbl_pengumuman {
     isi        String?   @db.Text
     file       String?   @db.VarChar(100)
     download   Int
-    tgl_update DateTime? @db.DateTime(0)
+    tgl_update DateTime? @db.Timestamp
     user       String?   @db.VarChar(100)
 }
 
@@ -194,7 +194,7 @@ model tbl_sarana {
     nm_sarana  String?   @db.VarChar(225)
     keterangan String?   @db.Text
     foto       String?   @db.VarChar(100)
-    tgl_update DateTime? @db.DateTime(0)
+    tgl_update DateTime? @db.Timestamp
     user       String?   @db.VarChar(100)
 }
 
@@ -203,7 +203,7 @@ model tbl_slider {
     id         Int       @id @default(autoincrement())
     foto       String?   @db.VarChar(100)
     keterangan String?   @db.Text
-    tgl_update DateTime? @db.DateTime(0)
+    tgl_update DateTime? @db.Timestamp
     user       String?   @db.VarChar(100)
 }
 
@@ -230,7 +230,7 @@ model profil_organisasi {
     misi        String?   @db.Text
     sejarah     String?   @db.Text
     tugas_pokok String?   @db.Text
-    tgl_update  DateTime? @db.DateTime(0)
+    tgl_update  DateTime? @db.Timestamp
     user        String?   @db.VarChar(100)
 }
 
@@ -239,7 +239,7 @@ model struktur_organisasi {
     id         Int       @id @default(autoincrement())
     gambar     String?   @db.VarChar(200)
     keterangan String?   @db.Text
-    tgl_update DateTime? @db.DateTime(0)
+    tgl_update DateTime? @db.Timestamp
     user       String?   @db.VarChar(100)
 }
 
@@ -254,7 +254,7 @@ model pejabat {
     telepon    String?   @db.VarChar(50)
     urutan     Int       @default(0)
     status     Int       @default(1)
-    tgl_update DateTime? @db.DateTime(0)
+    tgl_update DateTime? @db.Timestamp
     user       String?   @db.VarChar(100)
 }
 
@@ -268,7 +268,7 @@ model sop_dokumen {
     nomor      String?   @db.VarChar(50)
     tgl_terbit DateTime? @db.Date
     status     Int       @default(1)
-    tgl_update DateTime? @db.DateTime(0)
+    tgl_update DateTime? @db.Timestamp
     user       String?   @db.VarChar(100)
 }
 
@@ -281,7 +281,7 @@ model prestasi_organisasi {
     tanggal    DateTime  @db.Date
     kategori   String?   @db.VarChar(100)
     foto       String?   @db.VarChar(200)
-    tgl_update DateTime? @db.DateTime(0)
+    tgl_update DateTime? @db.Timestamp
     user       String?   @db.VarChar(100)
 }
 
@@ -295,7 +295,7 @@ model informasiPublik {
     tanggalPublikasi DateTime  @db.Date
     fileUrl          String?   @db.VarChar(255)
     status           String    @default("Draft") @db.VarChar(50) // Draft, Published, Archived
-    tgl_update       DateTime? @db.DateTime(0)
+    tgl_update       DateTime? @db.Timestamp
     user             String?   @db.VarChar(100)
 
     @@map("informasi_publik")
@@ -314,7 +314,7 @@ model layanan {
     link_url           String?   @db.VarChar(255)
     icon               String?   @db.VarChar(100)
     status             Int       @default(1) // 1=Active, 0=Inactive
-    tgl_update         DateTime? @db.DateTime(0)
+    tgl_update         DateTime? @db.Timestamp
     user               String?   @db.VarChar(100)
 }
 
@@ -323,14 +323,14 @@ model agenda {
     id              Int       @id @default(autoincrement())
     judul           String    @db.VarChar(225)
     deskripsi       String?   @db.Text
-    tanggal_mulai   DateTime  @db.DateTime(0)
-    tanggal_selesai DateTime? @db.DateTime(0)
+    tanggal_mulai   DateTime  @db.Timestamp
+    tanggal_selesai DateTime? @db.Timestamp
     lokasi          String?   @db.VarChar(255)
     penyelenggara   String?   @db.VarChar(200)
     kategori        String?   @db.VarChar(100) // rapat, sosialisasi, pelatihan
     foto            String?   @db.VarChar(255)
     status          String    @default("upcoming") @db.VarChar(50) // upcoming, ongoing, completed
-    tgl_update      DateTime? @db.DateTime(0)
+    tgl_update      DateTime? @db.Timestamp
     user            String?   @db.VarChar(100)
 }
 
@@ -347,7 +347,7 @@ model kontak {
     map_url         String?   @db.Text
     urutan          Int       @default(0)
     status          Int       @default(1)
-    tgl_update      DateTime? @db.DateTime(0)
+    tgl_update      DateTime? @db.Timestamp
     user            String?   @db.VarChar(100)
 }
 
@@ -363,6 +363,6 @@ model data_statistik {
     file_data  String?   @db.VarChar(255)
     tahun      Int?
     bulan      Int?
-    tgl_update DateTime? @db.DateTime(0)
+    tgl_update DateTime? @db.Timestamp
     user       String?   @db.VarChar(100)
 }
