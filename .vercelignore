@@ -1,0 +1,15 @@
+.git
+.gitignore
+README.md
+node_modules
+.next
+.env.local
+.DS_Store
+*.md
+!INSTALL-DATABASE.md
+!INSTALL-PPID.md
+!INSTALLATION-COMPLETE.md
+pnpm-lock.yaml
+jest.config.*
+tsconfig.json
+public/docs
