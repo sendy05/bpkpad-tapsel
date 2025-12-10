@@ -2,7 +2,6 @@
 .gitignore
 README.md
 node_modules
-.next
 .env.local
 .DS_Store
 *.md
@@ -11,5 +10,4 @@ node_modules
 !INSTALLATION-COMPLETE.md
 pnpm-lock.yaml
 jest.config.*
-tsconfig.json
 public/docs
