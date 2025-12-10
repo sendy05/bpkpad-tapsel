@@ -1,5 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+    // Enable Turbopack configuration
+    turbopack: {},
+    
     // Experimental features
     experimental: {
         // optimizeCss: true, // Disabled - causing critters module error
