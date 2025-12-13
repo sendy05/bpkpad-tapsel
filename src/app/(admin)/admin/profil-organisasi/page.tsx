@@ -1,6 +1,11 @@
-import { prisma } from '@/lib/prisma';
+import { prisma } from '@/lib/db';
 import Link from 'next/link';
 import ProfilForm from './ProfilForm';
+
+export const metadata = {
+    title: 'Profil Organisasi | Admin BPKPAD',
+    description: 'Kelola visi, misi, sejarah dan tugas pokok BPKPAD Tapanuli Selatan',
+};
 
 export const dynamic = 'force-dynamic';
 
@@ -8,23 +13,27 @@ export default async function ProfilOrganisasiPage() {
     const profil = await prisma.profil_organisasi.findFirst().catch(() => null);
 
     return (
-        <div>
-            <div className="mb-6 flex items-center justify-between">
-                <div>
-                    <h1 className="text-3xl font-bold text-gray-900">📋 Profil Organisasi</h1>
-                    <p className="text-gray-600 mt-1">Kelola visi, misi, dan tugas pokok organisasi</p>
+        <div className="p-4 md:p-6 lg:p-8">
+            <div className="max-w-5xl mx-auto">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+                    <div>
+                        <h1 className="text-2xl md:text-3xl font-bold text-gray-900">Profil Organisasi</h1>
+                        <p className="text-sm text-gray-600 mt-1">Kelola visi, misi, sejarah dan tugas pokok BPKPAD</p>
+                    </div>
+                    <Link
+                        href="/admin"
+                        className="inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-all duration-200 active:scale-95 font-medium"
+                    >
+                        <span>←</span>
+                        <span>Kembali</span>
+                    </Link>
                 </div>
-                <Link
-                    href="/admin"
-                    className="flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-gray-500 to-gray-600 hover:from-gray-600 hover:to-gray-700 text-white font-semibold shadow-lg hover:shadow-xl transition-all"
-                >
-                    ← Kembali
-                </Link>
-            </div>
 
-            <div className="bg-white rounded-xl shadow-lg p-8 border border-gray-100">
-                <ProfilForm profil={profil} />
+                <div className="bg-white rounded-xl shadow-md border border-gray-200 p-4 md:p-6 lg:p-8">
+                    <ProfilForm profil={profil} />
+                </div>
             </div>
         </div>
     );
 }
+

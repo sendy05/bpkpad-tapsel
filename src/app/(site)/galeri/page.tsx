@@ -111,3 +111,4 @@ export default async function GaleriPage({ searchParams }: { searchParams?: Prom
         </div>
     );
 }
+

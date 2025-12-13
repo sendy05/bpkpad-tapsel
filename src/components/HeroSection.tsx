@@ -73,3 +73,4 @@ export function HeroSection({ image, tagline, ctaPrimary, ctaSecondary }: Props)
         </section>
     );
 }
+

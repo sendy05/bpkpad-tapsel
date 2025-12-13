@@ -1,34 +1,60 @@
-import { prisma } from "@/lib/db";
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from 'next/server';
+import { prisma } from '@/lib/db';
+import { auth } from '@/auth';
 
-// GET all sliders
+// GET - List all sliders
 export async function GET() {
     try {
         const sliders = await prisma.tbl_slider.findMany({
-            orderBy: { tgl_update: "desc" },
+            orderBy: { tgl_update: 'desc' }
         });
         return NextResponse.json(sliders);
     } catch (error) {
-        return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+        console.error('Error fetching sliders:', error);
+        return NextResponse.json(
+            { error: 'Gagal mengambil data slider' },
+            { status: 500 }
+        );
     }
 }
 
-// CREATE new slider
-export async function POST(req: NextRequest) {
+// POST - Create new slider
+export async function POST(request: Request) {
     try {
-        const body = await req.json();
+        const session = await auth();
+        if (!session?.user) {
+            return NextResponse.json(
+                { error: 'Unauthorized' },
+                { status: 401 }
+            );
+        }
 
-        const newSlider = await prisma.tbl_slider.create({
+        const body = await request.json();
+        const { foto, keterangan } = body;
+
+        if (!foto) {
+            return NextResponse.json(
+                { error: 'URL foto harus diisi' },
+                { status: 400 }
+            );
+        }
+
+        const slider = await prisma.tbl_slider.create({
             data: {
-                keterangan: body.keterangan,
-                foto: body.foto,
-                user: body.user || "admin",
+                foto,
+                keterangan,
                 tgl_update: new Date(),
+                user: session.user.name || session.user.email || 'admin',
             },
         });
 
-        return NextResponse.json(newSlider, { status: 201 });
+        return NextResponse.json(slider, { status: 201 });
     } catch (error) {
-        return NextResponse.json({ error: "Failed to create slider" }, { status: 500 });
+        console.error('Error creating slider:', error);
+        return NextResponse.json(
+            { error: 'Gagal membuat slider baru' },
+            { status: 500 }
+        );
     }
 }
+

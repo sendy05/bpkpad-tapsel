@@ -190,3 +190,4 @@ export default async function BeritaListPage({ searchParams }: { searchParams?: 
         </div>
     );
 }
+

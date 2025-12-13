@@ -15,3 +15,4 @@ export async function POST() {
     res.cookies.set('la', '', { httpOnly: false, sameSite: 'lax', secure: true, path: '/', maxAge: 0 });
     return res;
 }
+

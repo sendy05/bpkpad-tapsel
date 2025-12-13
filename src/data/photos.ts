@@ -5,3 +5,4 @@ export const photos: Photo[] = [
     { id: 'p2', url: '/images/kegiatan-2.svg', judul: 'Sosialisasi Pajak', event: 'Sosialisasi', tahun: 2025, diunggah_pada: '2025-10-06' },
     { id: 'p3', url: '/images/kegiatan-3.svg', judul: 'Pelatihan Aset', event: 'Pelatihan', tahun: 2025, diunggah_pada: '2025-10-02' }
 ];
+

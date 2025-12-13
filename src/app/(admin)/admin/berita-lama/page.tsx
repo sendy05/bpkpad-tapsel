@@ -1,4 +1,4 @@
-import { prisma } from '@/lib/prisma';
+import { prisma } from '@/lib/db';
 import Link from 'next/link';
 import Image from 'next/image';
 
@@ -140,3 +140,4 @@ export default async function BeritaLamaPage() {
         </div>
     );
 }
+

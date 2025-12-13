@@ -17,3 +17,4 @@ export function LinkButton({ className, variant, size, href, ...props }: LinkBut
         <Link href={href} className={cn(buttonVariants({ variant, size }), className)} {...props} />
     );
 }
+

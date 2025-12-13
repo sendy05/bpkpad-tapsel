@@ -19,3 +19,4 @@ export async function DELETE() {
     return NextResponse.json({ error: 'Endpoint tidak tersedia' }, { status: 410 });
 }
 
+

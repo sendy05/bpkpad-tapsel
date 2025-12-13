@@ -7,3 +7,4 @@ export function GET(request: Request) {
     const result = tipe ? documents.filter(d => d.tipe === tipe) : documents;
     return NextResponse.json(result);
 }
+

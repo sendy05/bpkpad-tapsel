@@ -203,3 +203,4 @@ export default function StatistikForm({ data }: StatistikFormProps) {
         </form>
     );
 }
+

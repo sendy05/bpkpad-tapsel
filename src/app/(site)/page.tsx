@@ -4,7 +4,7 @@ import { NewsCard } from '@/components/NewsCard';
 import { StatCards } from '@/components/StatCards';
 import { FooterKemenkeu } from '@/components/FooterKemenkeu';
 import type { Metadata } from 'next';
-import { prisma } from '@/lib/prisma';
+import { prisma } from '@/lib/db';
 import Link from 'next/link';
 
 export const dynamic = 'force-dynamic';
@@ -46,36 +46,46 @@ export default async function HomePage() {
         take: 6,
     }).catch(() => []);
 
-    // Hero carousel slides - Kemenkeu style with #APBD2025
-    const heroSlides = [
-        {
-            id: 1,
-            title: '#APBD2025',
-            subtitle: 'Anggaran Pendapatan dan Belanja Daerah Kabupaten Tapanuli Selatan 2025',
-            imageUrl: 'https://images.unsplash.com/photo-1427751840561-9852520f8ce8?w=1920&h=800&fit=crop',
-            tag: 'APBD',
-            ctaText: 'BACA SELENGKAPNYA',
-            ctaLink: '/apbd-2025'
-        },
-        {
-            id: 2,
-            title: 'Transparansi Keuangan Daerah',
-            subtitle: 'Komitmen pengelolaan keuangan dan aset daerah yang transparan, akuntabel, dan profesional untuk kesejahteraan masyarakat',
-            imageUrl: 'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=1920&h=800&fit=crop',
-            tag: 'Transparansi',
-            ctaText: 'BACA SELENGKAPNYA',
-            ctaLink: '/transparansi'
-        },
-        {
-            id: 3,
-            title: 'Layanan Pajak Digital',
-            subtitle: 'Sistem pembayaran pajak daerah online yang mudah, cepat, dan terintegrasi untuk kemudahan wajib pajak',
-            imageUrl: 'https://images.unsplash.com/photo-1450101499163-c8848c66ca85?w=1920&h=800&fit=crop',
-            tag: 'Layanan Digital',
-            ctaText: 'BACA SELENGKAPNYA',
-            ctaLink: '/layanan/pajak'
-        }
-    ];
+    // Hero carousel slides - Use database sliders if available, otherwise use default
+    const heroSlides = sliderImages.length > 0 
+        ? sliderImages.map((slider, index) => ({
+            id: slider.id,
+            title: slider.keterangan || 'BPKPAD Tapanuli Selatan',
+            subtitle: '',
+            imageUrl: slider.foto || 'https://images.unsplash.com/photo-1427751840561-9852520f8ce8?w=1920&h=800&fit=crop',
+            tag: '',
+            ctaText: '',
+            ctaLink: '#'
+        }))
+        : [
+            {
+                id: 1,
+                title: '#APBD2025',
+                subtitle: 'Anggaran Pendapatan dan Belanja Daerah Kabupaten Tapanuli Selatan 2025',
+                imageUrl: 'https://images.unsplash.com/photo-1427751840561-9852520f8ce8?w=1920&h=800&fit=crop',
+                tag: 'APBD',
+                ctaText: 'BACA SELENGKAPNYA',
+                ctaLink: '/apbd-2025'
+            },
+            {
+                id: 2,
+                title: 'Transparansi Keuangan Daerah',
+                subtitle: 'Komitmen pengelolaan keuangan dan aset daerah yang transparan, akuntabel, dan profesional untuk kesejahteraan masyarakat',
+                imageUrl: 'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=1920&h=800&fit=crop',
+                tag: 'Transparansi',
+                ctaText: 'BACA SELENGKAPNYA',
+                ctaLink: '/transparansi'
+            },
+            {
+                id: 3,
+                title: 'Layanan Pajak Digital',
+                subtitle: 'Sistem pembayaran pajak daerah online yang mudah, cepat, dan terintegrasi untuk kemudahan wajib pajak',
+                imageUrl: 'https://images.unsplash.com/photo-1450101499163-c8848c66ca85?w=1920&h=800&fit=crop',
+                tag: 'Layanan Digital',
+                ctaText: 'BACA SELENGKAPNYA',
+                ctaLink: '/layanan/pajak'
+            }
+        ];
 
     return (
         <div className="min-h-screen bg-neutral-50">
@@ -332,3 +342,4 @@ export default async function HomePage() {
         </div>
     );
 }
+

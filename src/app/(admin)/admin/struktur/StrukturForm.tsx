@@ -167,3 +167,4 @@ export default function StrukturForm({ struktur }: { struktur?: any }) {
         </form>
     );
 }
+

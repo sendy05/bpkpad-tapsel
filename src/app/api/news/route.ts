@@ -24,3 +24,4 @@ export function GET(request: Request) {
     const items = filtered.slice(start, start + pageSize);
     return NextResponse.json({ items, total });
 }
+

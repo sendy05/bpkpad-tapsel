@@ -57,3 +57,4 @@ export function NewsCard({ title, excerpt, date, category, imageUrl, href }: New
         </Link>
     );
 }
+

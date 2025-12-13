@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 // Auth handled by middleware
-import { prisma } from '@/lib/prisma';
+import { prisma } from '@/lib/db';
 
 // GET - List all layanan with optional filters
 export async function GET(request: NextRequest) {
@@ -110,3 +110,4 @@ export async function POST(request: NextRequest) {
         );
     }
 }
+

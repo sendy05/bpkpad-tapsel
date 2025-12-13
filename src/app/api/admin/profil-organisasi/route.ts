@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
+import { prisma } from '@/lib/db';
 // Auth handled by middleware
 
 export async function POST(req: NextRequest) {
@@ -47,3 +47,4 @@ export async function POST(req: NextRequest) {
         );
     }
 }
+

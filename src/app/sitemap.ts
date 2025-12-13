@@ -11,3 +11,4 @@ export default function sitemap(): MetadataRoute.Sitemap {
         { url: `${base}/kontak`, changeFrequency: 'yearly', priority: 0.6 }
     ];
 }
+

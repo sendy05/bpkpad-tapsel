@@ -161,3 +161,4 @@ export default function GaleriForm({ initialData, mode }: GaleriFormProps) {
         </form>
     );
 }
+

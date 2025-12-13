@@ -1,65 +1,105 @@
-import { prisma } from "@/lib/db";
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from 'next/server';
+import { prisma } from '@/lib/db';
+import { auth } from '@/auth';
 
-// GET single slider
+// GET - Get single slider
 export async function GET(
-    req: NextRequest,
+    request: Request,
     { params }: { params: Promise<{ id: string }> }
 ) {
     try {
         const { id } = await params;
         const slider = await prisma.tbl_slider.findUnique({
-            where: { id: parseInt(id) },
+            where: { id: parseInt(id) }
         });
 
         if (!slider) {
-            return NextResponse.json({ error: "Slider tidak ditemukan" }, { status: 404 });
+            return NextResponse.json(
+                { error: 'Slider tidak ditemukan' },
+                { status: 404 }
+            );
         }
 
         return NextResponse.json(slider);
     } catch (error) {
-        return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+        console.error('Error fetching slider:', error);
+        return NextResponse.json(
+            { error: 'Gagal mengambil data slider' },
+            { status: 500 }
+        );
     }
 }
 
-// UPDATE slider
-export async function PUT(
-    req: NextRequest,
+// PATCH - Update slider
+export async function PATCH(
+    request: Request,
     { params }: { params: Promise<{ id: string }> }
 ) {
     try {
-        const { id } = await params;
-        const body = await req.json();
+        const session = await auth();
+        if (!session?.user) {
+            return NextResponse.json(
+                { error: 'Unauthorized' },
+                { status: 401 }
+            );
+        }
 
-        const updated = await prisma.tbl_slider.update({
+        const { id } = await params;
+        const body = await request.json();
+        const { foto, keterangan } = body;
+
+        if (!foto) {
+            return NextResponse.json(
+                { error: 'URL foto harus diisi' },
+                { status: 400 }
+            );
+        }
+
+        const slider = await prisma.tbl_slider.update({
             where: { id: parseInt(id) },
             data: {
-                keterangan: body.keterangan,
-                foto: body.foto,
-                user: body.user || "admin",
+                foto,
+                keterangan,
                 tgl_update: new Date(),
+                user: session.user.name || session.user.email || 'admin',
             },
         });
 
-        return NextResponse.json(updated);
+        return NextResponse.json(slider);
     } catch (error) {
-        return NextResponse.json({ error: "Failed to update slider" }, { status: 500 });
+        console.error('Error updating slider:', error);
+        return NextResponse.json(
+            { error: 'Gagal memperbarui slider' },
+            { status: 500 }
+        );
     }
 }
 
-// DELETE slider
+// DELETE - Delete slider
 export async function DELETE(
-    req: NextRequest,
+    request: Request,
     { params }: { params: Promise<{ id: string }> }
 ) {
     try {
+        const session = await auth();
+        if (!session?.user) {
+            return NextResponse.json(
+                { error: 'Unauthorized' },
+                { status: 401 }
+            );
+        }
+
         const { id } = await params;
         await prisma.tbl_slider.delete({
-            where: { id: parseInt(id) },
+            where: { id: parseInt(id) }
         });
 
-        return NextResponse.json({ success: true });
+        return NextResponse.json({ message: 'Slider berhasil dihapus' });
     } catch (error) {
-        return NextResponse.json({ error: "Failed to delete slider" }, { status: 500 });
+        console.error('Error deleting slider:', error);
+        return NextResponse.json(
+            { error: 'Gagal menghapus slider' },
+            { status: 500 }
+        );
     }
 }

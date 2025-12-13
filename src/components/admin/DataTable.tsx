@@ -36,3 +36,4 @@ export function DataTable<T>({ columns, data }: { columns: Column<T>[]; data: T[
         </div>
     );
 }
+

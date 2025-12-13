@@ -18,3 +18,4 @@ export function rateLimit(key: Key, max: number, windowMs: number) {
     store.set(key, item);
     return { allowed: true, remaining: max - item.count, resetAt: item.resetAt };
 }
+

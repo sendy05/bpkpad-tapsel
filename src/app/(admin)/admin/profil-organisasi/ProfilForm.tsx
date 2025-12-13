@@ -131,3 +131,4 @@ export default function ProfilForm({ profil }: { profil: any }) {
         </form>
     );
 }
+

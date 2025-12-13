@@ -1,4 +1,4 @@
-import { prisma } from '@/lib/prisma';
+import { prisma } from '@/lib/db';
 import Link from 'next/link';
 import type { Metadata } from 'next';
 
@@ -225,3 +225,4 @@ export default async function PajakPage() {
         </div>
     );
 }
+

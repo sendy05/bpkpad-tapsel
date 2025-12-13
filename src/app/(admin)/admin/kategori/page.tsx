@@ -1,4 +1,4 @@
-import { prisma } from '@/lib/prisma';
+import { prisma } from '@/lib/db';
 import Link from 'next/link';
 import DeleteButton from '@/components/admin/DeleteButton';
 import { LinkButton } from '@/components/ui/link-button';
@@ -126,3 +126,4 @@ export default async function KategoriListPage({ searchParams }: { searchParams:
         </div>
     );
 }
+

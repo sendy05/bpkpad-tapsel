@@ -15,3 +15,4 @@ export function GalleryGrid({ limit = 6 }: Props) {
         </section>
     );
 }
+

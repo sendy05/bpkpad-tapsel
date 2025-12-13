@@ -151,3 +151,4 @@ export function HeroCarousel({ slides, autoPlayInterval = 5000 }: HeroCarouselPr
         </div>
     );
 }
+

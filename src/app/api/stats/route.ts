@@ -4,3 +4,4 @@ import { stats } from '@/data/stats';
 export function GET() {
     return NextResponse.json(stats);
 }
+

@@ -99,6 +99,14 @@ const nextConfig = {
 
     // Webpack configuration
     webpack: (config, { dev, isServer }) => {
+        // Suppress findDOMNode warnings from react-quill
+        if (!isServer) {
+            config.resolve.alias = {
+                ...config.resolve.alias,
+                'react-dom': 'react-dom/profiling',
+            };
+        }
+
         // Production optimizations
         if (!dev && !isServer) {
             config.optimization = {
@@ -145,8 +153,8 @@ const nextConfig = {
     // PoweredBy header removal
     poweredByHeader: false,
 
-    // React strict mode
-    reactStrictMode: true,
+    // React strict mode - Disabled to prevent react-quill findDOMNode warnings
+    reactStrictMode: false,
 
     // Generate ETags
     generateEtags: true,

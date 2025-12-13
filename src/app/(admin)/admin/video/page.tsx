@@ -1,120 +1,131 @@
-﻿import { prisma } from '@/lib/prisma';
+import { prisma } from '@/lib/db';
 import Link from 'next/link';
-import DeleteButtonGeneric from '@/components/admin/DeleteButtonGeneric';
+
+export const metadata = {
+    title: 'Kelola Video | Admin BPKPAD',
+    description: 'Kelola video kegiatan dan promosi BPKPAD Tapanuli Selatan',
+};
 
 export const dynamic = 'force-dynamic';
 
 // Extract YouTube video ID
-function getYoutubeEmbedUrl(url: string) {
-    try {
-        const videoId = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([^&\s]+)/)?.[1];
-        return videoId ? `https://www.youtube.com/embed/${videoId}` : null;
-    } catch {
-        return null;
-    }
+function getYoutubeId(url: string) {
+    const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
+    const match = url.match(regExp);
+    return (match && match[2].length === 11) ? match[2] : null;
 }
 
 export default async function VideoPage() {
-    const videoList = await prisma.tbl_video.findMany({
-        orderBy: { id: 'desc' },
+    const videos = await prisma.tbl_video.findMany({
+        orderBy: { tgl_update: 'desc' },
     });
 
     return (
-        <div>
+        <div className="p-4 md:p-6 lg:p-8">
             {/* Header */}
-            <div className="mb-8 flex items-center justify-between">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
                 <div>
-                    <h1 className="text-4xl font-bold bg-gradient-to-r from-red-600 to-pink-600 bg-clip-text text-transparent">
-                        Video
-                    </h1>
-                    <p className="text-gray-600 mt-2">Kelola video dokumentasi dan kegiatan BPKPAD</p>
+                    <h1 className="text-2xl md:text-3xl font-bold text-gray-900">Manajemen Video</h1>
+                    <p className="text-sm text-gray-600 mt-1">Kelola video YouTube untuk website</p>
                 </div>
                 <Link
                     href="/admin/video/new"
-                    className="flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-red-500 to-pink-600 hover:from-red-600 hover:to-pink-700 text-white font-semibold shadow-lg hover:shadow-xl transition-all"
+                    className="inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-gradient-to-r from-red-500 to-pink-600 text-white rounded-lg hover:shadow-lg transition-all duration-200 active:scale-95 font-medium"
                 >
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-                    </svg>
-                    Tambah Video
+                    <span className="text-lg">?</span>
+                    <span>Tambah Video</span>
                 </Link>
             </div>
 
-            {/* Stats */}
-            <div className="mb-6 bg-white rounded-2xl p-6 border-l-4 border-red-500 shadow-lg w-64">
-                <div className="flex items-center justify-between">
-                    <div>
-                        <p className="text-gray-600 text-sm">Total Video</p>
-                        <p className="text-4xl font-bold text-gray-800 mt-2">{videoList.length}</p>
+            {/* Stats Card */}
+            <div className="bg-gradient-to-r from-red-50 to-pink-50 border border-red-200 rounded-xl p-4 mb-6">
+                <div className="flex items-center gap-3">
+                    <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-red-500 to-pink-600 flex items-center justify-center text-white text-xl">
+                        ??
                     </div>
-                    <div className="w-16 h-16 bg-red-100 rounded-2xl flex items-center justify-center text-3xl">
-
+                    <div>
+                        <div className="text-2xl font-bold text-gray-900">{videos.length}</div>
+                        <div className="text-sm text-gray-600">Total Video</div>
                     </div>
                 </div>
             </div>
 
-            {/* Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {videoList.length === 0 ? (
-                    <div className="col-span-full bg-white rounded-2xl p-16 text-center shadow-lg">
-                        <svg className="w-24 h-24 text-gray-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                        </svg>
-                        <p className="text-xl font-semibold text-gray-900 mb-2">Belum Ada Video</p>
-                        <p className="text-gray-600">Klik tombol Tambah Video untuk menambahkan video YouTube baru</p>
+            {/* Grid View */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+                {videos.length === 0 ? (
+                    <div className="col-span-full bg-white rounded-xl shadow-md border border-gray-200 p-12 text-center">
+                        <span className="text-6xl">??</span>
+                        <p className="font-medium text-gray-900 mt-4 text-lg">Belum ada video</p>
+                        <p className="text-sm text-gray-600 mt-2">Klik tombol "Tambah Video" untuk menambahkan video YouTube</p>
                     </div>
                 ) : (
-                    videoList.map((video) => {
-                        const embedUrl = getYoutubeEmbedUrl(video.video);
+                    videos.map((video) => {
+                        const youtubeId = getYoutubeId(video.video);
+                        const thumbnail = youtubeId ? `https://img.youtube.com/vi/${youtubeId}/maxresdefault.jpg` : null;
+
                         return (
-                            <div key={video.id} className="group bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all hover:-translate-y-1 border border-gray-100">
-                                <div className="relative w-full aspect-video bg-gradient-to-br from-red-50 to-pink-50">
-                                    {embedUrl ? (
-                                        <iframe
-                                            src={embedUrl}
-                                            title={video.keterangan || 'Video'}
-                                            className="w-full h-full"
-                                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                                            allowFullScreen
+                            <div key={video.id} className="bg-white rounded-xl shadow-md border border-gray-200 overflow-hidden hover:shadow-xl transition-all duration-300">
+                                {/* Thumbnail */}
+                                <div className="relative aspect-video bg-gray-900">
+                                    {thumbnail ? (
+                                        <img 
+                                            src={thumbnail} 
+                                            alt={video.keterangan}
+                                            className="w-full h-full object-cover"
                                         />
                                     ) : (
-                                        <div className="w-full h-full flex items-center justify-center text-gray-400">
-                                            <svg className="w-20 h-20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                                            </svg>
+                                        <div className="w-full h-full flex items-center justify-center text-gray-400 text-5xl">
+                                            ??
                                         </div>
                                     )}
-                                    <div className="absolute top-3 right-3">
-                                        <span className="inline-flex items-center px-3 py-1.5 rounded-full text-xs font-bold bg-red-500 text-white shadow-lg backdrop-blur-sm">
-                                            #{video.id}
-                                        </span>
+                                    <div className="absolute inset-0 bg-black bg-opacity-30 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity">
+                                        <a 
+                                            href={video.video} 
+                                            target="_blank" 
+                                            rel="noopener noreferrer"
+                                            className="px-4 py-2 bg-red-600 text-white rounded-full font-medium hover:bg-red-700 transition-colors text-sm"
+                                        >
+                                            ? Tonton
+                                        </a>
                                     </div>
                                 </div>
-                                <div className="p-5">
-                                    <div className="mb-4">
-                                        <h3 className="text-lg font-bold text-gray-900 mb-2 line-clamp-2">
-                                            {video.keterangan || 'Tanpa Judul'}
-                                        </h3>
-                                        <p className="text-gray-600 text-sm leading-relaxed line-clamp-3 min-h-[3.6rem]">
-                                            {video.keterangan || 'Tidak ada keterangan'}
-                                        </p>
+
+                                {/* Content */}
+                                <div className="p-4">
+                                    <h3 className="text-sm font-semibold text-gray-900 line-clamp-2 mb-2 min-h-[2.5rem]">
+                                        {video.keterangan}
+                                    </h3>
+                                    
+                                    <div className="text-xs text-gray-500 mb-4">
+                                        {new Date(video.tgl_update).toLocaleDateString('id-ID', {
+                                            day: '2-digit',
+                                            month: 'short',
+                                            year: 'numeric'
+                                        })}
                                     </div>
-                                    <div className="flex items-center gap-2 pt-4 border-t border-gray-100">
+
+                                    {/* Actions */}
+                                    <div className="flex gap-2 pt-3 border-t border-gray-100">
                                         <Link
-                                            href={`/admin/video//edit`}
-                                            className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-blue-500 to-cyan-600 hover:from-blue-600 hover:to-cyan-700 text-white font-semibold transition-all shadow-md hover:shadow-lg text-sm"
+                                            href={`/admin/video/${video.id}/edit`}
+                                            className="flex-1 px-3 py-2 bg-amber-500 text-white rounded-lg hover:bg-amber-600 transition-colors text-sm font-medium text-center active:scale-95"
                                         >
-                                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                                            </svg>
-                                            Edit
+                                            ?? Edit
                                         </Link>
-                                        <DeleteButtonGeneric
-                                            id={video.id}
-                                            endpoint="/api/admin/video"
-                                            itemName="video"
-                                            className="flex-1 py-2.5 rounded-xl shadow-md hover:shadow-lg text-sm"
-                                        />
+                                        <form action={`/api/admin/video/${video.id}`} method="POST" className="flex-1">
+                                            <input type="hidden" name="_method" value="DELETE" />
+                                            <button
+                                                type="submit"
+                                                onClick={(e) => {
+                                                    if (!confirm('Yakin ingin menghapus video ini?')) {
+                                                        e.preventDefault();
+                                                    }
+                                                }}
+                                                className="w-full px-3 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors text-sm font-medium active:scale-95"
+                                            >
+                                                ??? Hapus
+                                            </button>
+                                        </form>
                                     </div>
                                 </div>
                             </div>
@@ -125,3 +136,4 @@ export default async function VideoPage() {
         </div>
     );
 }
+

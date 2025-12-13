@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
+import { prisma } from '@/lib/db';
 
 export async function GET() {
     try {
@@ -36,3 +36,4 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ error: 'Failed to create agenda' }, { status: 500 });
     }
 }
+

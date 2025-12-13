@@ -1,6 +1,13 @@
 import { Suspense } from 'react';
 import Link from 'next/link';
-import { prisma } from '@/lib/prisma';
+import { prisma } from '@/lib/db';
+
+export const metadata = {
+    title: 'Kelola Data Statistik | Admin BPKPAD',
+    description: 'Kelola data statistik pajak, retribusi, aset dan pendapatan daerah',
+};
+
+export const dynamic = 'force-dynamic';
 
 async function getStatistikList() {
     const statistik = await prisma.data_statistik.findMany({
@@ -26,81 +33,76 @@ export default async function StatistikAdminPage() {
     };
 
     return (
-        <div className="space-y-6">
+        <div className="p-4 md:p-6 lg:p-8">
             {/* Header */}
-            <div className="flex items-center justify-between">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
                 <div>
-                    <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent">
-                        Data Statistik
-                    </h1>
-                    <p className="text-gray-600 mt-1">Kelola data statistik pendapatan dan aset BPKPAD</p>
+                    <h1 className="text-2xl md:text-3xl font-bold text-gray-900">Data Statistik</h1>
+                    <p className="text-sm text-gray-600 mt-1">Kelola data statistik pendapatan dan aset BPKPAD</p>
                 </div>
                 <Link
                     href="/admin/data-statistik/new"
-                    className="px-6 py-3 bg-gradient-to-r from-blue-600 to-cyan-600 text-white rounded-xl hover:shadow-lg transition-all duration-200"
+                    className="inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded-lg hover:shadow-lg transition-all duration-200 active:scale-95 font-medium"
                 >
-                    + Tambah Data
+                    <span className="text-lg">➕</span>
+                    <span>Tambah Data</span>
                 </Link>
             </div>
 
             {/* Stats Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-5 gap-6">
-                <div className="bg-white rounded-2xl p-6 border-l-4 border-blue-500 shadow-lg">
-                    <div className="flex items-center justify-between">
-                        <div>
-                            <p className="text-gray-600 text-sm">Total Data</p>
-                            <p className="text-3xl font-bold text-gray-800 mt-2">{stats.total}</p>
-                        </div>
-                        <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center text-2xl">
+            <div className="grid grid-cols-2 lg:grid-cols-5 gap-4 mb-6">
+                <div className="bg-gradient-to-r from-indigo-50 to-purple-50 border border-indigo-200 rounded-xl p-4">
+                    <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white text-lg">
                             📊
                         </div>
+                        <div>
+                            <div className="text-xl md:text-2xl font-bold text-gray-900">{stats.total}</div>
+                            <div className="text-xs text-gray-600">Total</div>
+                        </div>
                     </div>
                 </div>
-
-                <div className="bg-white rounded-2xl p-6 border-l-4 border-green-500 shadow-lg">
-                    <div className="flex items-center justify-between">
-                        <div>
-                            <p className="text-gray-600 text-sm">Pajak</p>
-                            <p className="text-3xl font-bold text-gray-800 mt-2">{stats.pajak}</p>
-                        </div>
-                        <div className="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center text-2xl">
+                <div className="bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-xl p-4">
+                    <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-green-500 to-emerald-600 flex items-center justify-center text-white text-lg">
                             💰
                         </div>
+                        <div>
+                            <div className="text-xl md:text-2xl font-bold text-gray-900">{stats.pajak}</div>
+                            <div className="text-xs text-gray-600">Pajak</div>
+                        </div>
                     </div>
                 </div>
-
-                <div className="bg-white rounded-2xl p-6 border-l-4 border-purple-500 shadow-lg">
-                    <div className="flex items-center justify-between">
-                        <div>
-                            <p className="text-gray-600 text-sm">Retribusi</p>
-                            <p className="text-3xl font-bold text-gray-800 mt-2">{stats.retribusi}</p>
-                        </div>
-                        <div className="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center text-2xl">
+                <div className="bg-gradient-to-r from-purple-50 to-pink-50 border border-purple-200 rounded-xl p-4">
+                    <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-purple-500 to-pink-600 flex items-center justify-center text-white text-lg">
                             💵
                         </div>
+                        <div>
+                            <div className="text-xl md:text-2xl font-bold text-gray-900">{stats.retribusi}</div>
+                            <div className="text-xs text-gray-600">Retribusi</div>
+                        </div>
                     </div>
                 </div>
-
-                <div className="bg-white rounded-2xl p-6 border-l-4 border-orange-500 shadow-lg">
-                    <div className="flex items-center justify-between">
-                        <div>
-                            <p className="text-gray-600 text-sm">Aset</p>
-                            <p className="text-3xl font-bold text-gray-800 mt-2">{stats.aset}</p>
-                        </div>
-                        <div className="w-12 h-12 bg-orange-100 rounded-xl flex items-center justify-center text-2xl">
+                <div className="bg-gradient-to-r from-orange-50 to-amber-50 border border-orange-200 rounded-xl p-4">
+                    <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-orange-500 to-amber-600 flex items-center justify-center text-white text-lg">
                             🏢
                         </div>
+                        <div>
+                            <div className="text-xl md:text-2xl font-bold text-gray-900">{stats.aset}</div>
+                            <div className="text-xs text-gray-600">Aset</div>
+                        </div>
                     </div>
                 </div>
-
-                <div className="bg-white rounded-2xl p-6 border-l-4 border-cyan-500 shadow-lg">
-                    <div className="flex items-center justify-between">
-                        <div>
-                            <p className="text-gray-600 text-sm">Pendapatan</p>
-                            <p className="text-3xl font-bold text-gray-800 mt-2">{stats.pendapatan}</p>
-                        </div>
-                        <div className="w-12 h-12 bg-cyan-100 rounded-xl flex items-center justify-center text-2xl">
+                <div className="bg-gradient-to-r from-cyan-50 to-blue-50 border border-cyan-200 rounded-xl p-4">
+                    <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center text-white text-lg">
                             📈
+                        </div>
+                        <div>
+                            <div className="text-xl md:text-2xl font-bold text-gray-900">{stats.pendapatan}</div>
+                            <div className="text-xs text-gray-600">Pendapatan</div>
                         </div>
                     </div>
                 </div>
@@ -182,3 +184,4 @@ export default async function StatistikAdminPage() {
         </div>
     );
 }
+

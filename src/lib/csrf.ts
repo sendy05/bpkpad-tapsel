@@ -28,3 +28,4 @@ export const csrf = {
     cookieName: CSRF_COOKIE,
     headerName: CSRF_HEADER,
 };
+

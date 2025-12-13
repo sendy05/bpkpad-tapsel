@@ -19,3 +19,4 @@ export function SocialLinks({ links }: { links: LinkItem[] }) {
         </div>
     );
 }
+

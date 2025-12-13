@@ -90,3 +90,4 @@ export default function EditCategoryForm({ id, item }: { id: string; item: { nam
         </form>
     );
 }
+

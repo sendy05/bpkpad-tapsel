@@ -43,3 +43,4 @@ export async function verifyToken<T extends JwtPayload>(token: string) {
     const { payload } = await jwtVerify(token, secret);
     return payload as unknown as T;
 }
+

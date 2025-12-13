@@ -14,3 +14,4 @@ export default function NewInformasiPublikPage() {
         </div>
     );
 }
+

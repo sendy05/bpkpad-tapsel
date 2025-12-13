@@ -31,3 +31,4 @@ export function NewsList({ limit = 4 }: Props) {
         </section>
     );
 }
+

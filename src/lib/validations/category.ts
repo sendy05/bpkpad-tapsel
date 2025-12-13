@@ -6,3 +6,4 @@ export const CategorySchema = z.object({
 });
 
 export type CategoryInput = z.infer<typeof CategorySchema>;
+

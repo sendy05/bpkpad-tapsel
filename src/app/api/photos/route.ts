@@ -10,3 +10,4 @@ export function GET(request: Request) {
     if (limit) result = result.slice(0, limit);
     return NextResponse.json(result);
 }
+

@@ -5,3 +5,4 @@ export const stats: Stats = {
     total_aset: 2_750_000_000_000,
     jumlah_pegawai: 156,
 };
+

@@ -41,3 +41,4 @@ export const news: News[] = [
         published_at: '2025-10-01'
     }
 ];
+

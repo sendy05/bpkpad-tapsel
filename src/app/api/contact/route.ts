@@ -22,3 +22,4 @@ export async function POST(request: Request) {
     // Simulasi sukses
     return NextResponse.json({ ok: true, message: 'Pesan Anda telah terkirim.' });
 }
+

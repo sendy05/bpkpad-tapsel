@@ -1,4 +1,4 @@
-import { prisma } from '@/lib/prisma';
+import { prisma } from '@/lib/db';
 import { LinkButton } from '@/components/ui/link-button';
 
 export const dynamic = 'force-dynamic';
@@ -172,3 +172,4 @@ export default async function AuditLogPage({ searchParams }: { searchParams: Pro
         </div>
     );
 }
+

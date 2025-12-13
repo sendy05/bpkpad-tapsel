@@ -32,28 +32,36 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
                 const password = String(credentials.password || '');
                 if (!identifier || password.length < 3) return null;
 
-                const user = await prisma.admin.findFirst({
+                // Use User table instead of admin table
+                const user = await prisma.user.findFirst({
                     where: {
                         OR: [
                             { email: identifier },
                             { username: identifier }
                         ],
-                        status: 1, // Active status
+                        status: 'Active',
                     },
                 });
                 if (!user) return null;
 
-                // Simple password comparison (adjust if using hashing)
-                if (user.password !== password) return null;
+                // Verify password using bcrypt
+                const isValid = await verifyPassword(password, user.passwordHash);
+                if (!isValid) return null;
 
-                // Determine role based on level
+                // Map User role to session role
                 let role: 'SUPER_ADMIN' | 'EDITOR' | 'AUTHOR' = 'AUTHOR';
-                if (user.level === 1) role = 'SUPER_ADMIN';
-                else if (user.level === 2) role = 'EDITOR';
+                if (user.role === 'SuperAdmin') role = 'SUPER_ADMIN';
+                else if (user.role === 'Editor') role = 'EDITOR';
+
+                // Update last login
+                await prisma.user.update({
+                    where: { id: user.id },
+                    data: { lastLoginAt: new Date() }
+                }).catch(() => {});
 
                 return {
                     id: String(user.id),
-                    name: user.nm_pengguna || user.username || 'Admin',
+                    name: user.name || user.username || 'Admin',
                     email: user.email || undefined,
                     role: role,
                 };
@@ -79,3 +87,4 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         },
     },
 });
+

@@ -1,7 +1,7 @@
 import { Metadata } from 'next';
 import Link from 'next/link';
 import { DollarSign, ArrowRight, Clock, FileText } from 'lucide-react';
-import { prisma } from '@/lib/prisma';
+import { prisma } from '@/lib/db';
 
 export const dynamic = 'force-dynamic';
 
@@ -113,3 +113,4 @@ export default async function RetribusiPage() {
         </main>
     );
 }
+

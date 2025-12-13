@@ -1,33 +1,44 @@
-import { prisma } from '@/lib/prisma';
-import EditForm from '../../EditForm';
 import { notFound } from 'next/navigation';
+import { prisma } from '@/lib/db';
+import BeritaEditForm from './BeritaEditForm';
 
-type Ctx = { params: Promise<{ id: string }> };
-
-export const metadata = { title: 'Edit Berita' };
 export const dynamic = 'force-dynamic';
 
-export default async function Page(ctx: Ctx) {
-    const { id } = await ctx.params;
-    // Note: news and category tables don't exist in current schema
-    const item: any = null;
-    const categories: any[] = [];
-    // const [item, categories] = await Promise.all([
-    //     prisma.news.findUnique({ where: { id } }),
-    //     prisma.category.findMany({ orderBy: { name: 'asc' } }),
-    // ]);
-    if (!item) notFound();
+async function getBerita(id: string) {
+    try {
+        const berita = await prisma.tbl_berita.findUnique({
+            where: { id_berita: id },
+        });
+        return berita;
+    } catch (error) {
+        return null;
+    }
+}
+
+export default async function EditBeritaPage({
+    params,
+}: {
+    params: Promise<{ id: string }>;
+}) {
+    const { id } = await params;
+    const berita = await getBerita(id);
+
+    if (!berita) {
+        notFound();
+    }
+
     return (
         <div>
             <div className="mb-6">
-                <h1 className="text-3xl font-bold text-gray-900">Edit Berita</h1>
-                <p className="text-gray-600 mt-1">Perbarui informasi berita yang sudah ada</p>
+                <h1 className="text-3xl font-bold text-gray-900">✏️ Edit Berita</h1>
+                <p className="text-gray-600 mt-1">Ubah informasi berita: <span className="font-semibold text-emerald-600">{berita.judul}</span></p>
             </div>
             <div className="bg-white rounded-xl p-6 shadow-lg border border-gray-100">
-                <EditForm
-                    id={id}
-                    item={{
-                        title: item.title,
+                <BeritaEditForm berita={berita} />
+            </div>
+        </div>
+    );
+}
                         slug: item.slug,
                         categoryId: item.categoryId,
                         content: item.content || '',

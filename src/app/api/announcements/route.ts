@@ -4,3 +4,4 @@ import { announcements } from '@/data/announcements';
 export function GET() {
     return NextResponse.json(announcements);
 }
+

@@ -204,3 +204,4 @@ export default function NewForm({ categories }: { categories: { id: string; name
         </form>
     );
 }
+

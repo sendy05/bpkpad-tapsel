@@ -1,119 +1,183 @@
-﻿import { prisma } from '@/lib/prisma';
+import { prisma } from '@/lib/db';
 import Link from 'next/link';
-import Image from 'next/image';
-import DeleteButtonGeneric from '@/components/admin/DeleteButtonGeneric';
+import DeleteButton from '@/components/admin/DeleteButton';
 
 export const dynamic = 'force-dynamic';
 
 export default async function SliderPage() {
-    const sliderList = await prisma.tbl_slider.findMany({
-        orderBy: { tgl_update: 'desc' },
+    const sliders = await prisma.tbl_slider.findMany({
+        orderBy: { tgl_update: 'desc' }
     });
 
     return (
-        <div>
+        <div className="p-4 md:p-6 lg:p-8">
             {/* Header */}
-            <div className="mb-8 flex items-center justify-between">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
                 <div>
-                    <h1 className="text-4xl font-bold bg-gradient-to-r from-pink-600 to-rose-600 bg-clip-text text-transparent">
-                         Slider Website
-                    </h1>
-                    <p className="text-gray-600 mt-2">Kelola gambar slider homepage</p>
+                    <h1 className="text-2xl md:text-3xl font-bold text-gray-900">Manajemen Slider</h1>
+                    <p className="text-sm text-gray-600 mt-1">Kelola slider gambar di halaman utama website</p>
                 </div>
                 <Link
                     href="/admin/slider/new"
-                    className="flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-pink-500 to-rose-600 hover:from-pink-600 hover:to-rose-700 text-white font-semibold shadow-lg hover:shadow-xl transition-all"
+                    className="inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-gradient-to-r from-blue-500 to-cyan-600 text-white rounded-lg hover:shadow-lg transition-all duration-200 active:scale-95 font-medium"
                 >
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-                    </svg>
-                    Tambah Slider
+                    <span className="text-lg">➕</span>
+                    <span>Tambah Slider</span>
                 </Link>
             </div>
 
-            {/* Stats */}
-            <div className="mb-6 bg-white rounded-2xl p-6 border-l-4 border-pink-500 shadow-lg w-64">
-                <div className="flex items-center justify-between">
-                    <div>
-                        <p className="text-gray-600 text-sm">Total Slider</p>
-                        <p className="text-4xl font-bold text-gray-800 mt-2">{sliderList.length}</p>
+            {/* Stats Card */}
+            <div className="bg-gradient-to-r from-blue-50 to-cyan-50 border border-blue-200 rounded-xl p-4 mb-6">
+                <div className="flex items-center gap-3">
+                    <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-blue-500 to-cyan-600 flex items-center justify-center text-white text-xl">
+                        🖼️
                     </div>
-                    <div className="w-16 h-16 bg-pink-100 rounded-2xl flex items-center justify-center text-3xl">
-                        
+                    <div>
+                        <div className="text-2xl font-bold text-gray-900">{sliders.length}</div>
+                        <div className="text-sm text-gray-600">Total Slider</div>
                     </div>
                 </div>
             </div>
 
-            {/* Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {sliderList.length === 0 ? (
-                    <div className="col-span-full bg-white rounded-2xl p-16 text-center shadow-lg">
-                        <svg className="w-24 h-24 text-gray-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                        </svg>
-                        <p className="text-xl font-semibold text-gray-900 mb-2">Belum Ada Slider</p>
-                        <p className="text-gray-600">Klik tombol Tambah Slider untuk menambahkan gambar slider baru</p>
+            {/* Table - Desktop */}
+            <div className="hidden md:block bg-white rounded-xl shadow-md border border-gray-200 overflow-hidden">
+                <div className="overflow-x-auto">
+                    <table className="w-full">
+                        <thead className="bg-gradient-to-r from-gray-50 to-gray-100 border-b border-gray-200">
+                            <tr>
+                                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                                    #
+                                </th>
+                                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                                    Preview
+                                </th>
+                                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                                    Keterangan
+                                </th>
+                                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                                    Terakhir Update
+                                </th>
+                                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                                    Aksi
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody className="divide-y divide-gray-200">
+                            {sliders.length === 0 ? (
+                                <tr>
+                                    <td colSpan={5} className="px-6 py-12 text-center text-gray-500">
+                                        <div className="flex flex-col items-center gap-2">
+                                            <span className="text-4xl">📭</span>
+                                            <p className="font-medium">Belum ada slider</p>
+                                            <p className="text-sm">Klik tombol "Tambah Slider" untuk membuat slider baru</p>
+                                        </div>
+                                    </td>
+                                </tr>
+                            ) : (
+                                sliders.map((slider, idx) => (
+                                    <tr key={slider.id} className="hover:bg-gray-50 transition-colors">
+                                        <td className="px-6 py-4 text-sm text-gray-900 font-medium">
+                                            {idx + 1}
+                                        </td>
+                                        <td className="px-6 py-4">
+                                            {slider.foto ? (
+                                                <img 
+                                                    src={slider.foto} 
+                                                    alt="Slider"
+                                                    className="w-24 h-16 object-cover rounded-lg border border-gray-200"
+                                                />
+                                            ) : (
+                                                <div className="w-24 h-16 bg-gray-100 rounded-lg flex items-center justify-center text-gray-400 text-xs">
+                                                    No Image
+                                                </div>
+                                            )}
+                                        </td>
+                                        <td className="px-6 py-4">
+                                            <div className="text-sm text-gray-900 line-clamp-2">
+                                                {slider.keterangan || '-'}
+                                            </div>
+                                        </td>
+                                        <td className="px-6 py-4 text-sm text-gray-600">
+                                            {slider.tgl_update 
+                                                ? new Date(slider.tgl_update).toLocaleDateString('id-ID', {
+                                                    day: '2-digit',
+                                                    month: 'short',
+                                                    year: 'numeric'
+                                                })
+                                                : '-'
+                                            }
+                                        </td>
+                                        <td className="px-6 py-4">
+                                            <div className="flex items-center gap-2">
+                                                <Link
+                                                    href={`/admin/slider/${slider.id}/edit`}
+                                                    className="px-3 py-1.5 bg-amber-500 text-white rounded-lg hover:bg-amber-600 transition-colors text-sm font-medium"
+                                                >
+                                                    ✏️ Edit
+                                                </Link>
+                                                <DeleteButton resource="slider" id={slider.id.toString()} />
+                                            </div>
+                                        </td>
+                                    </tr>
+                                ))
+                            )}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            {/* Cards - Mobile */}
+            <div className="md:hidden space-y-4">
+                {sliders.length === 0 ? (
+                    <div className="bg-white rounded-xl shadow-md border border-gray-200 p-8 text-center">
+                        <div className="flex flex-col items-center gap-2">
+                            <span className="text-4xl">📭</span>
+                            <p className="font-medium text-gray-900">Belum ada slider</p>
+                            <p className="text-sm text-gray-600">Klik tombol "Tambah Slider" untuk membuat slider baru</p>
+                        </div>
                     </div>
                 ) : (
-                    sliderList.map((slider) => (
-                        <div key={slider.id} className="group bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all hover:-translate-y-1 border border-gray-100">
-                            <div className="relative w-full aspect-video bg-gradient-to-br from-pink-100 to-rose-100">
-                                {slider.foto ? (
-                                    <Image
-                                        src={slider.foto}
-                                        alt={slider.keterangan || 'Slider'}
-                                        fill
-                                        className="object-cover group-hover:scale-105 transition-transform duration-300"
-                                        unoptimized
-                                    />
-                                ) : (
-                                    <div className="w-full h-full flex items-center justify-center text-gray-400">
-                                        <svg className="w-20 h-20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                                        </svg>
-                                    </div>
-                                )}
-                                <div className="absolute top-3 right-3">
-                                    <span className="inline-flex items-center px-3 py-1.5 rounded-full text-xs font-bold bg-pink-500 text-white shadow-lg backdrop-blur-sm">
-                                        #{slider.id}
-                                    </span>
-                                </div>
-                            </div>
-                            <div className="p-6">
-                                <div className="mb-4">
-                                    <p className="text-gray-700 text-sm leading-relaxed line-clamp-3 min-h-[3.6rem]">
-                                        {slider.keterangan || 'Tidak ada keterangan'}
-                                    </p>
-                                </div>
-                                <div className="flex items-center justify-between text-xs text-gray-500 pb-4 mb-4 border-b border-gray-100">
-                                    <div className="flex items-center gap-1.5">
-                                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                                        </svg>
-                                        <span className="font-medium">{slider.user || 'Admin'}</span>
-                                    </div>
-                                    <div className="flex items-center gap-1.5">
-                                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                                        </svg>
-                                        <span>{slider.tgl_update ? new Date(slider.tgl_update).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' }) : '-'}</span>
+                    sliders.map((slider, idx) => (
+                        <div key={slider.id} className="bg-white rounded-xl shadow-md border border-gray-200 overflow-hidden">
+                            {slider.foto && (
+                                <img 
+                                    src={slider.foto} 
+                                    alt="Slider"
+                                    className="w-full h-48 object-cover"
+                                />
+                            )}
+                            <div className="p-4 space-y-3">
+                                <div className="flex items-start justify-between gap-3">
+                                    <div className="flex-1">
+                                        <div className="text-xs text-gray-500 mb-1">Slider #{idx + 1}</div>
+                                        <div className="text-sm text-gray-900 line-clamp-3">
+                                            {slider.keterangan || 'Tidak ada keterangan'}
+                                        </div>
                                     </div>
                                 </div>
-                                <div className="flex items-center gap-2">
+                                
+                                <div className="text-xs text-gray-500">
+                                    Update: {slider.tgl_update 
+                                        ? new Date(slider.tgl_update).toLocaleDateString('id-ID', {
+                                            day: '2-digit',
+                                            month: 'short',
+                                            year: 'numeric'
+                                        })
+                                        : '-'
+                                    }
+                                </div>
+
+                                <div className="flex gap-2 pt-2 border-t border-gray-100">
                                     <Link
-                                        href={`/admin/slider//edit`}
-                                        className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-blue-500 to-cyan-600 hover:from-blue-600 hover:to-cyan-700 text-white font-semibold transition-all shadow-md hover:shadow-lg"
+                                        href={`/admin/slider/${slider.id}/edit`}
+                                        className="flex-1 px-3 py-2 bg-amber-500 text-white rounded-lg hover:bg-amber-600 transition-colors text-sm font-medium text-center active:scale-95"
                                     >
-                                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                                        </svg>
-                                        Edit
+                                        ✏️ Edit
                                     </Link>
-                                    <DeleteButtonGeneric
-                                        id={slider.id}
-                                        endpoint="/api/admin/slider"
-                                        itemName="slider"
-                                        className="flex-1 py-2.5 rounded-xl shadow-md hover:shadow-lg"
+                                    <DeleteButton 
+                                        resource="slider" 
+                                        id={slider.id.toString()} 
+                                        className="flex-1 px-3 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors text-sm font-medium active:scale-95 disabled:opacity-50"
                                     />
                                 </div>
                             </div>
@@ -124,3 +188,4 @@ export default async function SliderPage() {
         </div>
     );
 }
+

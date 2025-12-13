@@ -36,3 +36,4 @@ describe('auth utils (non-JWT)', () => {
     // JWT-related tests are skipped in Jest due to ESM-only dependency (jose).
     // They are validated at runtime during build and can be covered with e2e tests.
 });
+
